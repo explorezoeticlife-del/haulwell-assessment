@@ -1,0 +1,499 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .ws-wrap {
+    font-family: var(--font-sans, sans-serif);
+    max-width: 680px;
+    color: var(--color-text-primary);
+    padding: 0 0 2rem;
+  }
+
+  .ws-header {
+    background: #4A6B50;
+    border-radius: var(--border-radius-lg, 12px);
+    padding: 2rem 2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
+  .ws-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.22);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+  }
+  .ws-title { font-size: 22px; font-weight: 500; line-height: 1.3; margin-bottom: 0.35rem; }
+  .ws-subtitle { font-size: 15px; opacity: 0.85; margin-bottom: 1.25rem; line-height: 1.5; }
+  .ws-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ws-meta-pill { background: rgba(255,255,255,0.18); color: #fff; font-size: 12px; padding: 4px 12px; border-radius: 20px; }
+
+  .core-msg {
+    border-left: 3px solid #4A6B50;
+    background: var(--color-background-secondary);
+    padding: 1rem 1.25rem;
+    border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+  }
+  .core-msg strong {
+    font-weight: 500;
+    display: block;
+    font-size: 11px;
+    color: #4A6B50;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .timeline-strip { display: flex; gap: 4px; margin-bottom: 1.5rem; border-radius: var(--border-radius-md, 8px); overflow: hidden; height: 48px; }
+  .tl-seg { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #fff; text-align: center; line-height: 1.2; padding: 0 6px; }
+  .tl-1 { background: #4A6B50; flex: 15; }
+  .tl-2 { background: #5A7A5A; flex: 20; }
+  .tl-3 { background: #956030; flex: 20; }
+  .tl-4 { background: #6B5A8A; flex: 20; }
+  .tl-5 { background: #3A5E80; flex: 15; }
+
+  .section {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg, 12px);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    background: var(--color-background-primary);
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 1rem 1.25rem;
+    cursor: pointer; user-select: none;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    transition: background 0.15s;
+  }
+  .section-header:hover { background: var(--color-background-secondary); }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .section-meta { flex: 1; }
+  .section-name { font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--color-text-primary); }
+  .section-time { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .section-chevron { font-size: 13px; color: var(--color-text-secondary); transition: transform 0.2s; }
+  .section-body { display: none; padding: 1.25rem; }
+  .section-body.open { display: block; }
+  .section-chevron.open { transform: rotate(180deg); }
+
+  .block-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.5rem; margin-top: 1rem;
+  }
+  .block-label:first-child { margin-top: 0; }
+
+  .purpose-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md, 8px);
+    padding: 0.75rem 1rem;
+    font-size: 13px; line-height: 1.65;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .facilitator-note {
+    border-left: 2px solid #4A6B50;
+    padding: 0.6rem 0.9rem;
+    font-size: 13px; line-height: 1.65;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.6rem;
+    font-style: italic;
+  }
+
+  .activity-card {
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md, 8px);
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.6rem;
+    font-size: 13px; line-height: 1.65;
+    background: var(--color-background-primary);
+  }
+  .activity-card-type {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 0.3rem;
+  }
+  .activity-card p { color: var(--color-text-primary); }
+
+  .discussion-q {
+    background: var(--color-background-warning);
+    border-radius: var(--border-radius-md, 8px);
+    padding: 0.75rem 1rem;
+    font-size: 13px; line-height: 1.65;
+    margin-bottom: 0.5rem;
+    border-left: 2px solid var(--color-border-warning);
+    color: var(--color-text-warning);
+  }
+  .discussion-q::before { content: "Discussion: "; font-weight: 500; }
+
+  .scenario-card {
+    background: var(--color-background-info);
+    border-radius: var(--border-radius-md, 8px);
+    padding: 0.85rem 1rem;
+    font-size: 13px; line-height: 1.65;
+    margin-bottom: 0.5rem;
+    border-left: 2px solid var(--color-border-info);
+    color: var(--color-text-info);
+  }
+  .scenario-card strong {
+    display: block; font-weight: 500; margin-bottom: 0.3rem;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  .tip-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; line-height: 1.65; margin-bottom: 0.4rem;
+    color: var(--color-text-primary);
+  }
+  .tip-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+
+  .emotional-bar {
+    background: var(--color-background-danger);
+    border-left: 2px solid var(--color-border-danger);
+    border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+    padding: 0.75rem 1rem;
+    font-size: 13px; line-height: 1.7;
+    margin-top: 0.75rem;
+    color: var(--color-text-danger);
+  }
+  .emotional-bar strong {
+    display: block; font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 0.35rem;
+  }
+
+  .handout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.5rem; }
+  .handout-item {
+    background: var(--color-background-success);
+    border-radius: var(--border-radius-md, 8px);
+    padding: 0.65rem 0.85rem;
+    font-size: 12px; line-height: 1.55;
+    color: var(--color-text-success);
+    border: 0.5px solid var(--color-border-success);
+  }
+  .handout-item strong {
+    display: block; font-weight: 500; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem;
+  }
+
+  .ws-footer {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg, 12px);
+    padding: 1.25rem;
+    background: var(--color-background-secondary);
+    margin-top: 0.5rem;
+  }
+  .ws-footer-title {
+    font-size: 11px; font-weight: 500; margin-bottom: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quote-item {
+    font-size: 12px; font-style: italic; line-height: 1.55;
+    color: var(--color-text-secondary);
+    padding: 0.5rem 0.75rem;
+    border-left: 2px solid var(--color-border-tertiary);
+    border-radius: 0 4px 4px 0;
+  }
+</style>
+
+<div class="ws-wrap">
+  <h2 style="position:absolute;left:-9999px">HaulWell Driver Readiness Workshop — 90-Minute Facilitator Guide</h2>
+
+  <div class="ws-header">
+    <div class="ws-badge">HaulWell™ Facilitator Guide</div>
+    <div class="ws-title">Life After CDL: Staying Steady When the Road Gets Real</div>
+    <div class="ws-subtitle">A 90-minute driver readiness workshop for new CDL graduates — conversational, practical, real.</div>
+    <div class="ws-meta">
+      <span class="ws-meta-pill">90 minutes</span>
+      <span class="ws-meta-pill">25–30 participants</span>
+      <span class="ws-meta-pill">New CDL drivers</span>
+      <span class="ws-meta-pill">Conversational format</span>
+    </div>
+  </div>
+
+  <div class="core-msg">
+    <strong>Core Message</strong>
+    Passing CDL training prepares you to operate the truck. Life on the road requires learning how to operate yourself under pressure — your hydration, your sleep, your stress, your energy, and knowing when your margin is getting thin.
+  </div>
+
+  <div class="timeline-strip">
+    <div class="tl-seg tl-1">Open<br>0–15</div>
+    <div class="tl-seg tl-2">Reality<br>15–35</div>
+    <div class="tl-seg tl-3">Body<br>35–55</div>
+    <div class="tl-seg tl-4">Stress<br>55–70</div>
+    <div class="tl-seg tl-5">Close<br>70–90</div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s1')">
+      <div class="section-dot" style="background:#4A6B50"></div>
+      <div class="section-meta">
+        <div class="section-name">Block 1 — Opening: Setting the Tone</div>
+        <div class="section-time">0–15 minutes &nbsp;|&nbsp; Welcome · Ground rules · Opening reflection</div>
+      </div>
+      <div class="section-chevron" id="chev-s1">▼</div>
+    </div>
+    <div class="section-body" id="s1">
+      <div class="block-label" style="color:#4A6B50">Purpose</div>
+      <div class="purpose-box">Establish psychological safety fast. Drivers don't respond to lecture energy. They respond to realness. Your job in this opening is to signal clearly: this room is different. You're not going to teach at them — you're going to talk with them.</div>
+
+      <div class="block-label" style="color:#4A6B50">Facilitator script (opening lines)</div>
+      <div class="facilitator-note">"You passed your CDL. That's real. That took work, and it matters. But I want to talk about something CDL school didn't cover — and that's what actually happens to your body and your head once you're behind the wheel on day one of a real run. Nobody warned me about that part. So that's what we're doing today."</div>
+      <div class="facilitator-note">"This isn't a health class. I'm not going to tell you to eat more salads. What I am going to do is be straight with you about what changes after training — so when it happens, you recognize it, and you know what to do."</div>
+
+      <div class="block-label" style="color:#4A6B50">Activity — 2-minute partner share (10 min)</div>
+      <div class="activity-card">
+        <div class="activity-card-type" style="color:#4A6B50">Pair & share</div>
+        <p>Have participants turn to someone next to them. Give them 90 seconds each to answer: "What's the one thing nobody told you to expect about your first weeks on the road?" Then pull 4–5 responses out loud. Write key words on the board. Don't correct anything yet — just affirm and collect. This activates the room immediately and shows them their experience is already the content.</p>
+      </div>
+
+      <div class="block-label" style="color:#4A6B50">Ground rules</div>
+      <div class="tip-row"><div class="tip-dot" style="background:#4A6B50"></div><span>No right answers — road experience comes in all shapes</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#4A6B50"></div><span>Talk from your experience, not about somebody else's</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#4A6B50"></div><span>What gets said in this room stays here</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#4A6B50"></div><span>Phones on silent — but yes, you can check if dispatch calls</span></div>
+
+      <div class="emotional-bar">
+        <strong>Emotional target for this block</strong>
+        "Finally, someone is talking about the real side of this." They should feel respected — not lectured at — within the first 5 minutes.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s2')">
+      <div class="section-dot" style="background:#5A7A5A"></div>
+      <div class="section-meta">
+        <div class="section-name">Block 2 — Schedule Shock & The Reality of Day One</div>
+        <div class="section-time">15–35 minutes &nbsp;|&nbsp; What changes · Fatigue accumulation · Caffeine trap</div>
+      </div>
+      <div class="section-chevron" id="chev-s2">▼</div>
+    </div>
+    <div class="section-body" id="s2">
+      <div class="block-label" style="color:#5A7A5A">Purpose</div>
+      <div class="purpose-box">Name the invisible shift that happens when training ends and real runs begin. Most new drivers hit "schedule shock" — the disorientation of irregular sleep, no set meal times, and the mental load of staying compliant while navigating alone. This block names it before it blindsides them.</div>
+
+      <div class="block-label" style="color:#5A7A5A">Teach-through-conversation (8 min)</div>
+      <div class="facilitator-note">"In training, you had a schedule. Every day had structure — class time, test time, drive time. Your body knew what was coming. On the road, that structure disappears. Your body doesn't know when to sleep, when to eat, or when to rest. That adjustment is real, and it takes longer than most people expect. We call that schedule shock — and it affects your focus, your patience, your decision-making, and yes, your blood pressure."</div>
+
+      <div class="discussion-q">What does a typical day look like for you right now — or what do you think it'll look like? Walk me through it from when your alarm goes off.</div>
+      <div class="discussion-q">How much of your day is actually in your control versus dictated by dispatch, traffic, and load timing?</div>
+
+      <div class="block-label" style="color:#5A7A5A">Mini-teach: Fatigue accumulation (4 min)</div>
+      <div class="facilitator-note">"Fatigue doesn't just mean tired. It accumulates — like a slow leak in a tire. You don't notice it at first. You feel 'fine.' But over days and weeks, that margin shrinks. The decisions you make at hour 9 are not the same as the decisions you make at hour 2. And most of the time, you won't feel the difference until it's already causing a problem."</div>
+      <div class="facilitator-note">"Here's the part nobody talks about: caffeine borrows energy from tomorrow. A 32oz energy drink at 2am will get you through the night — but your body will ask for that back. With interest."</div>
+
+      <div class="block-label" style="color:#5A7A5A">Scenario discussion (7 min)</div>
+      <div class="scenario-card">
+        <strong>Scenario A — "The Fine Lie"</strong>
+        Marcus has been on the road for 3 weeks. He's sleeping about 5–6 hours at irregular times. He feels "fine" — not exhausted, just kind of flat. His dispatcher pushes a tight turnaround. He says yes because he doesn't feel bad enough to say no. What's actually happening in his body? What would you tell him?
+      </div>
+      <div class="scenario-card">
+        <strong>Scenario B — "The Caffeine Stack"</strong>
+        Priya is 4 hours into an overnight run. She's had two energy drinks and a large coffee. She's awake, but her hands feel slightly shaky and her mind is jumping between topics. She figures she just needs one more hour and then she'll be fine. What would you tell her about what's actually going on — and what might help more than another drink?
+      </div>
+
+      <div class="block-label" style="color:#5A7A5A">Key point to land before moving on</div>
+      <div class="purpose-box">"Functioning is not the same as operating with full margin. One of the most important skills on the road is learning to tell the difference — before you need to."</div>
+
+      <div class="emotional-bar">
+        <strong>Emotional target for this block</strong>
+        "I've already felt some of this." They should start connecting the content to their actual experience in training or early runs.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s3')">
+      <div class="section-dot" style="background:#956030"></div>
+      <div class="section-meta">
+        <div class="section-name">Block 3 — Your Body on the Road</div>
+        <div class="section-time">35–55 minutes &nbsp;|&nbsp; Hydration · Blood pressure · Energy · Food reality</div>
+      </div>
+      <div class="section-chevron" id="chev-s3">▼</div>
+    </div>
+    <div class="section-body" id="s3">
+      <div class="block-label" style="color:#956030">Purpose</div>
+      <div class="purpose-box">Cover the four body systems that take the most strain in the first year: hydration, blood pressure, energy rhythms, and food access. Make this practical — not clinical. They need to walk out knowing what to watch for and what to do first, not a list of supplements.</div>
+
+      <div class="block-label" style="color:#956030">Teach: Hydration (5 min)</div>
+      <div class="facilitator-note">"Most drivers don't drink enough water — not because they don't know they should, but because stopping feels inconvenient and a full bladder on a long stretch is miserable. So you just... drink less. And your body adjusts. Except it doesn't really adjust — it just starts compensating. Headaches. Irritability. Trouble thinking clearly. Blood pressure that creeps up."</div>
+      <div class="facilitator-note">"Here's a simple rule of thumb: if your urine is darker than pale yellow, you're already behind. You don't need a formula. You just need to pay attention."</div>
+
+      <div class="discussion-q">How many of you have cut back on water just to avoid stopping? What does that actually cost you over a 10-hour run?</div>
+
+      <div class="block-label" style="color:#956030">Teach: Blood pressure basics (5 min)</div>
+      <div class="facilitator-note">"Blood pressure is one of those things you don't feel until it's already been a problem for a while. High blood pressure has no real symptoms in the early stages. You feel fine. You pass your DOT physical. And then a year or two in, it becomes a medical certificate issue — which becomes a job issue."</div>
+      <div class="facilitator-note">"The things that push blood pressure up on the road? Dehydration. Salt-heavy convenience food. Poor sleep. Chronic stress. Not one of those is your fault — they're built into the job. But knowing that they're accumulating is the first step to managing them."</div>
+
+      <div class="block-label" style="color:#956030">Activity — Food reality check (6 min)</div>
+      <div class="activity-card">
+        <div class="activity-card-type" style="color:#956030">Small group discussion (groups of 4–5)</div>
+        <p>Ask: "Think about what you actually have access to eat on a long run — truck stops, drive-throughs, whatever you carry in a cooler. What does a real day of food look like?" Then: "What's one thing you could realistically add, swap, or carry that would make that a little better — without it being a hassle?" Have each group share one realistic idea. Write them all on the board. The point is not perfection — it's one thing.</p>
+      </div>
+
+      <div class="block-label" style="color:#956030">Teach: Energy rhythms (4 min)</div>
+      <div class="facilitator-note">"Your body runs on a natural energy rhythm. There's a dip in the early afternoon — around 1 to 3pm — that happens to almost everyone, regardless of sleep. If you're already running low, that dip hits harder. If you've been relying on caffeine to flatten out your day, you start to lose track of your own signals."</div>
+
+      <div class="scenario-card">
+        <strong>Scenario C — "The Invisible Slide"</strong>
+        Devon is 8 months in. He's tired but "used to it." His food has drifted to mostly fast food and snacks from the truck stop. He stopped carrying a cooler because it was more work than it seemed worth. He's gaining weight slowly. His blood pressure was borderline at his last DOT physical but passed. What would you say to Devon right now — not as a lecture, but as someone who's got his back?
+      </div>
+
+      <div class="emotional-bar">
+        <strong>Emotional target for this block</strong>
+        "This actually fits the road." Information that feels real and usable — not clinical, not preachy, not disconnected from the actual conditions they're operating in.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s4')">
+      <div class="section-dot" style="background:#6B5A8A"></div>
+      <div class="section-meta">
+        <div class="section-name">Block 4 — Stress, Emotional Load & the Long Game</div>
+        <div class="section-time">55–70 minutes &nbsp;|&nbsp; Emotional adjustment · Margin awareness · Mentor connection</div>
+      </div>
+      <div class="section-chevron" id="chev-s4">▼</div>
+    </div>
+    <div class="section-body" id="s4">
+      <div class="block-label" style="color:#6B5A8A">Purpose</div>
+      <div class="purpose-box">This is the block most wellness programs skip entirely. The emotional adjustment of entering the road — isolation, pressure from dispatch, missing family, the quiet of long hours, the weight of responsibility — is real and significant. Naming it without dramatizing it is the goal. And then pivoting to the most practical response: find a mentor.</div>
+
+      <div class="block-label" style="color:#6B5A8A">Teach: Stress load (5 min)</div>
+      <div class="facilitator-note">"Driving is physically sedentary but mentally and emotionally demanding. You're making thousands of small decisions every hour. You're managing relationships with dispatch, with shippers, with other drivers on the road. You're away from home. And you're doing all of that while your body is trying to adjust to irregular sleep and a diet that doesn't always cooperate."</div>
+      <div class="facilitator-note">"That load is real — and it accumulates quietly. You don't usually notice it happening. You notice it later, when small things start to irritate you more than they should. When you feel short with people on the phone. When you're not sleeping even when you have time to sleep. When the things that used to recharge you just aren't doing it anymore. That's what stress accumulation looks like on the road."</div>
+
+      <div class="discussion-q">What do you do to decompress after a difficult run right now? Not what you think you should do — what do you actually do?</div>
+      <div class="discussion-q">If you had a rough 3-day stretch — delays, weather, a difficult shipper — what would you need to reset?</div>
+
+      <div class="block-label" style="color:#6B5A8A">Activity — The margin meter (6 min)</div>
+      <div class="activity-card">
+        <div class="activity-card-type" style="color:#6B5A8A">Individual reflection + pair share</div>
+        <p>Give participants 2 minutes to draw a simple fuel gauge on a notecard — but instead of fuel, it measures their margin: the space between "functioning" and "running on empty." Ask: "Where would your margin be right now — or where do you think it'll be at the end of your first month?" Then share with a partner: "What's one thing you could protect that would keep that gauge from hitting empty too fast?" No group share required — this one can stay private if they want it to.</p>
+      </div>
+
+      <div class="block-label" style="color:#6B5A8A">The mentor conversation (4 min)</div>
+      <div class="facilitator-note">"Here's something that doesn't get said enough in CDL training: the veterans on the road already know everything we've talked about today. They've lived it. And most of them — most of them — will talk to you about it if you ask. Not all of them. But most."</div>
+      <div class="facilitator-note">"Finding a mentor isn't about being weak or not knowing what you're doing. It's about compressing your learning curve before your body or your career pays the price of figuring it all out alone. The smartest thing you can do in your first year is find one or two veterans who've been where you're going — and actually talk to them."</div>
+
+      <div class="activity-card">
+        <div class="activity-card-type" style="color:#6B5A8A">Whole group — quick commitment round</div>
+        <p>"Think of one veteran driver you've met — in training, at a truck stop, in your company, anywhere. Not someone you know well. Just someone you've crossed paths with who seemed to have it figured out. What's one question you would actually ask them if you had 10 minutes?" Go around the room quickly — 15 seconds each. The goal is for them to leave with an actual person or type of person in mind — and a question ready.</p>
+      </div>
+
+      <div class="emotional-bar">
+        <strong>Emotional target for this block</strong>
+        "Nobody explained it like this before." The emotional side of the job has been acknowledged — not dramatized, not minimized. They feel seen without feeling pitied.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s5')">
+      <div class="section-dot" style="background:#3A5E80"></div>
+      <div class="section-meta">
+        <div class="section-name">Block 5 — Closing: One Thing & Sending Them Out Right</div>
+        <div class="section-time">70–90 minutes &nbsp;|&nbsp; Synthesis · Commitment · Takeaways · Close</div>
+      </div>
+      <div class="section-chevron" id="chev-s5">▼</div>
+    </div>
+    <div class="section-body" id="s5">
+      <div class="block-label" style="color:#3A5E80">Purpose</div>
+      <div class="purpose-box">Don't overwhelm them with a 10-point action plan. Close with one thing — and make it theirs. The goal is that they leave with a specific, realistic commitment to one habit or one conversation that's within reach this week.</div>
+
+      <div class="block-label" style="color:#3A5E80">Synthesis exercise (8 min)</div>
+      <div class="activity-card">
+        <div class="activity-card-type" style="color:#3A5E80">Written reflection — individual</div>
+        <p>Hand out index cards or the HaulWell Readiness Card. Ask: "Write down the one thing from today that you didn't know before — or knew but hadn't thought about this way." Then: "Write down one specific thing you're going to do in the next 7 days because of what we talked about today. Not a resolution. A thing. Something you can tell someone you did." Give 3 full minutes of quiet for this.</p>
+      </div>
+
+      <div class="discussion-q">Who wants to share what they wrote — just the thing you're going to do, not the whole story?</div>
+
+      <div class="block-label" style="color:#3A5E80">Closing message (5 min)</div>
+      <div class="facilitator-note">"You're entering one of the most demanding professions there is. Not just physically — but in terms of mental load, schedule pressure, and the amount you're asked to manage alone. And the fact that you're here — that you're willing to think about this before it becomes a problem — says something about you."</div>
+      <div class="facilitator-note">"The road is long. Your career is long. The drivers who stay healthy and stay in this industry for 20 or 30 years aren't the ones who pushed hardest through every signal their body was giving them. They're the ones who figured out how to pay attention — early."</div>
+      <div class="facilitator-note">"Go find a veteran. Ask them one real question. Drink more water than you think you need. And pay attention to your margin — not when it's empty, but before."</div>
+
+      <div class="block-label" style="color:#3A5E80">Handout / takeaway card contents</div>
+      <div class="handout-grid">
+        <div class="handout-item"><strong>Watch for</strong>Darker urine than pale yellow · Shorter fuse than usual · Trouble sleeping when you have time · Feeling "flat" instead of tired</div>
+        <div class="handout-item"><strong>Do first</strong>Add water before caffeine · One real food swap per day · Name your margin level each morning · Identify one veteran to talk to</div>
+        <div class="handout-item"><strong>Blood pressure basics</strong>Dehydration raises it · Salt-heavy food raises it · Poor sleep raises it · You won't feel it early — that's the point</div>
+        <div class="handout-item"><strong>Your one thing</strong>Write it here: __________ &nbsp;&nbsp; I'll do this by: __________</div>
+      </div>
+
+      <div class="block-label" style="color:#3A5E80">Final 5 minutes — open Q&amp;A / parking lot</div>
+      <div class="purpose-box">Keep a "parking lot" visible on the board — questions that came up during the session that you didn't have time to fully address. Address 2–3 now. For the rest, let participants know they can bring them to their mentor, their dispatcher, or flag them for a follow-up session. This signals that the conversation doesn't end here.</div>
+
+      <div class="emotional-bar">
+        <strong>Emotional target for this block</strong>
+        "This feels practical, not preachy." They leave with one thing they chose and committed to. And they feel respected — not talked down to.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection('s6')">
+      <div class="section-dot" style="background:#8B3A30"></div>
+      <div class="section-meta">
+        <div class="section-name">Facilitator Notes & Room Setup</div>
+        <div class="section-time">Before you walk in &nbsp;|&nbsp; Pacing · Energy · What to avoid</div>
+      </div>
+      <div class="section-chevron" id="chev-s6">▼</div>
+    </div>
+    <div class="section-body" id="s6">
+      <div class="block-label" style="color:#8B3A30">Pacing reminders</div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>If a discussion runs long — let it. Cut the mini-teach, not the conversation. The room talking is the room learning.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Don't fill silence. Give 5 full seconds after a question before you rephrase it. Silence is them thinking.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>If energy drops, go physical — stand, stretch, move seats, do a quick show-of-hands before the next scenario.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>If someone shares something personal and heavy, acknowledge it briefly and genuinely — then bring it back to the group.</span></div>
+
+      <div class="block-label" style="color:#8B3A30">What to avoid</div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Avoid asking "Has anyone ever experienced...?" — they're new. Ask "What do you think it would feel like if...?" instead.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Don't give clinical definitions. If you need to explain blood pressure, use an analogy: "A garden hose with too much pressure eventually wears the connections out."</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Don't end with a list of what they should stop doing. End with one thing they're choosing to start.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Don't be the expert in the room — be the person who's thought about this more than most and wants to share it honestly.</span></div>
+
+      <div class="block-label" style="color:#8B3A30">Room setup</div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Round tables or angled rows — you want them talking to each other, not just to you.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Have index cards or notecards at each seat before they arrive.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Have water available — and openly model drinking it yourself throughout the session.</span></div>
+      <div class="tip-row"><div class="tip-dot" style="background:#8B3A30"></div><span>Whiteboard or flipchart visible — use it actively during partner shares to write what you hear back at them.</span></div>
+    </div>
+  </div>
+
+  <div class="ws-footer">
+    <div class="ws-footer-title">What success sounds like leaving the room</div>
+    <div class="quote-grid">
+      <div class="quote-item">"Finally… someone is talking about the real side of this."</div>
+      <div class="quote-item">"This actually fits the road."</div>
+      <div class="quote-item">"I've already experienced some of this."</div>
+      <div class="quote-item">"Nobody explained it like this before."</div>
+      <div class="quote-item">"This feels practical, not preachy."</div>
+      <div class="quote-item">"I know exactly who I'm going to talk to this week."</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSection(id) {
+  const body = document.getElementById(id);
+  const chev = document.getElementById('chev-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+</script>

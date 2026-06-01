@@ -1,0 +1,374 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);background:transparent}
+
+.hw-assess{max-width:640px;margin:0 auto;padding:20px 16px 32px}
+
+.phase{display:none}
+.phase.active{display:block}
+
+.brand-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand-name{font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.05em}
+.brand-tm{color:#2E7D7B}
+
+.progress-wrap{margin-bottom:24px}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.progress-track{height:4px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#2E7D7B;border-radius:2px;transition:width .3s ease}
+
+.q-signal{font-size:11px;font-weight:500;letter-spacing:.07em;color:#2E7D7B;margin-bottom:6px;text-transform:uppercase}
+.q-text{font-size:16px;font-weight:500;color:var(--color-text-primary);line-height:1.5;margin-bottom:20px}
+
+.scale-note{font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;font-style:italic}
+
+.options{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.opt-btn:hover{border-color:#2E7D7B;background:color-mix(in srgb,#2E7D7B 5%,var(--color-background-primary))}
+.opt-btn.selected{border-color:#2E7D7B;border-width:1.5px;background:color-mix(in srgb,#2E7D7B 8%,var(--color-background-primary))}
+.opt-score{width:24px;height:24px;border-radius:50%;background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0;transition:background .15s,color .15s}
+.opt-btn.selected .opt-score{background:#2E7D7B;border-color:#2E7D7B;color:#fff}
+.opt-label{font-size:14px;color:var(--color-text-primary)}
+
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.btn-back{font-size:13px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:8px 0}
+.btn-back:hover{color:var(--color-text-primary)}
+.btn-next{padding:10px 24px;background:#1B2A4A;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-next:hover{opacity:.88}
+.btn-next:disabled{opacity:.4;cursor:default}
+
+.intro-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:24px;margin-bottom:20px}
+.intro-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.intro-sub{font-size:14px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:16px}
+.intro-meta{display:flex;gap:16px;flex-wrap:wrap}
+.meta-chip{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:4px}
+.notice{background:color-mix(in srgb,#2E7D7B 8%,var(--color-background-primary));border:1px solid color-mix(in srgb,#2E7D7B 25%,transparent);border-radius:var(--border-radius-md);padding:12px 16px;font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:20px}
+.btn-start{width:100%;padding:14px;background:#1B2A4A;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:15px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-start:hover{opacity:.88}
+
+.result-zone{border-radius:var(--border-radius-lg);padding:20px;margin-bottom:16px}
+.rz-label{font-size:11px;font-weight:500;letter-spacing:.07em;margin-bottom:6px;text-transform:uppercase}
+.rz-title{font-size:22px;font-weight:500;margin-bottom:8px}
+.rz-score{font-size:13px;margin-bottom:10px}
+.rz-desc{font-size:14px;line-height:1.6}
+
+.profile-head{font-size:15px;font-weight:500;color:var(--color-text-primary);margin:20px 0 12px}
+.signal-row{margin-bottom:10px}
+.sig-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.sig-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.sig-score-txt{font-size:12px;color:var(--color-text-secondary)}
+.sig-track{height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.sig-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+.next-steps{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:16px;margin-top:16px;margin-bottom:16px}
+.ns-head{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px}
+.ns-item{display:flex;gap:10px;margin-bottom:8px;font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.ns-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+.guiding{border-left:3px solid #2E7D7B;padding:10px 14px;font-size:13px;color:var(--color-text-secondary);font-style:italic;line-height:1.5;margin-top:16px;border-radius:0;background:color-mix(in srgb,#2E7D7B 6%,var(--color-background-primary))}
+
+.btn-restart{margin-top:16px;width:100%;padding:11px;background:var(--color-background-primary);border:1px solid var(--color-border-secondary);color:var(--color-text-secondary);border-radius:var(--border-radius-md);font-size:14px;cursor:pointer;transition:border-color .15s}
+.btn-restart:hover{border-color:#2E7D7B;color:var(--color-text-primary)}
+.btn-share{margin-top:8px;width:100%;padding:11px;background:#2E7D7B;border:none;color:#fff;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-share:hover{opacity:.88}
+</style>
+
+<h2 class="sr-only">HaulWell Driver Readiness Assessment — 25-item self-awareness tool</h2>
+
+<div class="hw-assess">
+  <div class="brand-bar">
+    <span class="brand-name"><span class="brand-tm">HaulWell</span>™</span>
+    <span style="font-size:12px;color:var(--color-text-secondary)">Driver Readiness Assessment™</span>
+  </div>
+
+  <div class="phase active" id="ph-intro">
+    <div class="intro-card">
+      <div class="intro-title">Driver Readiness Assessment™</div>
+      <div class="intro-sub">This is a self-awareness tool — not a test. There are no right or wrong answers. Think about your experience over the past 7 days as you respond.</div>
+      <div class="intro-meta">
+        <span class="meta-chip"><i class="ti ti-list-numbers" aria-hidden="true" style="font-size:14px"></i> 25 questions</span>
+        <span class="meta-chip"><i class="ti ti-clock" aria-hidden="true" style="font-size:14px"></i> 5–10 minutes</span>
+        <span class="meta-chip"><i class="ti ti-shield-off" aria-hidden="true" style="font-size:14px"></i> Not a medical evaluation</span>
+      </div>
+    </div>
+    <div class="notice">Your results are yours. This assessment is not a fitness-for-duty determination, diagnosis, or evaluation for any employer purpose. It is designed to help you recognize patterns that may affect your long-term readiness and stability.</div>
+    <button class="btn-start" onclick="startAssess()">Begin assessment</button>
+  </div>
+
+  <div class="phase" id="ph-q">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="q-counter">Question 1 of 25</span>
+        <span id="signal-label"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-signal" id="q-signal-name"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="scale-note">0 = Rarely or never &nbsp;&nbsp; 1 = Sometimes &nbsp;&nbsp; 2 = Often &nbsp;&nbsp; 3 = Almost always</div>
+    <div class="options" id="opts"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Back</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()">Next →</button>
+    </div>
+  </div>
+
+  <div class="phase" id="ph-result">
+    <div id="zone-card" class="result-zone">
+      <div class="rz-label" id="rz-label"></div>
+      <div class="rz-title" id="rz-title"></div>
+      <div class="rz-score" id="rz-score"></div>
+      <div class="rz-desc" id="rz-desc"></div>
+    </div>
+
+    <div class="profile-head">Readiness Signal™ profile</div>
+    <div id="signal-bars"></div>
+
+    <div class="next-steps" id="next-steps-block">
+      <div class="ns-head">Recommended next steps</div>
+      <div id="next-steps-list"></div>
+    </div>
+
+    <div class="guiding">"Most drivers are still functioning long before visible problems appear." — HaulWell™ Guiding Principle</div>
+
+    <button class="btn-share" onclick="sendPrompt('I just completed the HaulWell™ Driver Readiness Assessment. Can you help me understand my results and what I should focus on next?')">Talk through my results with HaulWell™ AI Coach ↗</button>
+    <button class="btn-restart" onclick="restart()">Retake assessment</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {signal:'Recovery Signal™',        items:[
+    'I wake up feeling reasonably restored and ready for the day.',
+    'I have felt physically exhausted for multiple days in a row.',
+    'I feel like I am recovering adequately between work periods.'
+  ]},
+  {signal:'Hydration Signal™',       items:[
+    'I have been intentional about drinking water throughout the day.',
+    'I have gone long periods without drinking water.',
+    'I have noticed signs that I may not be hydrating consistently.'
+  ]},
+  {signal:'Compensation Signal™',    items:[
+    'My energy has remained relatively steady throughout most days.',
+    'I have relied heavily on caffeine, energy drinks, or stimulants to get through the day.',
+    'I have experienced noticeable energy crashes.'
+  ]},
+  {signal:'Schedule Strain Signal™', items:[
+    'My schedule has made it difficult to maintain healthy routines.',
+    'Frequent schedule changes have disrupted my sleep or recovery.',
+    'I have felt rushed or under constant time pressure.'
+  ]},
+  {signal:'Stress Load Signal™',     items:[
+    'I have been carrying a high level of stress lately.',
+    'Stress has been affecting my mood, patience, or decision-making.',
+    'I feel mentally overloaded by daily demands.'
+  ]},
+  {signal:'Cognitive Load Signal™',  items:[
+    'I have noticed difficulty concentrating on routine tasks.',
+    'I have felt mentally foggy or less focused than usual.',
+    'Routine decisions have felt more difficult than they normally do.'
+  ]},
+  {signal:'Routine Stability Signal™',items:[
+    'I have been able to maintain basic daily routines consistently.',
+    'My routines have become increasingly difficult to maintain.',
+    'I feel like I am constantly reacting instead of staying ahead of my day.'
+  ]},
+  {signal:'Operational Margin Signal™',items:[
+    'At the end of most days, I still have some reserve energy left.',
+    'Everything seems to require more effort than it used to.',
+    'I am getting through my day, but it feels harder than it should.',
+    'I feel like I am still functioning, but operating with less margin.'
+  ]},
+];
+
+const OPTS = [
+  {score:0,label:'Rarely or never'},
+  {score:1,label:'Sometimes'},
+  {score:2,label:'Often'},
+  {score:3,label:'Almost always'},
+];
+
+const REVERSE_ITEMS = new Set([0,3,6,21]);
+
+const ZONES = [
+  {id:'stable',  min:0,  max:18, label:'Stable Readiness',
+   bg:'color-mix(in srgb,#2E7D50 10%,var(--color-background-primary))',
+   border:'color-mix(in srgb,#2E7D50 35%,transparent)',
+   labelColor:'#1F5A38', titleColor:'#1F5A38', dotColor:'#2E7D50',
+   desc:'You are maintaining healthy Operational Margin™ and recovering adequately from the demands of daily life and work. Routines appear stable and your readiness signals are relatively low.',
+   steps:[
+     {dot:'#2E7D50',text:'Continue reinforcing the habits and routines that are supporting your readiness right now.'},
+     {dot:'#2E7D50',text:'Note which signals, if any, are showing early movement — those are worth watching.'},
+     {dot:'#2E7D50',text:'Consider sharing the HaulWell™ framework with peers who may be in the Yellow Zone™.'},
+   ]},
+  {id:'yellow',  min:19, max:37, label:'Early Readiness Strain',
+   badge:'Yellow Zone™',
+   bg:'color-mix(in srgb,#C8850A 10%,var(--color-background-primary))',
+   border:'color-mix(in srgb,#C8850A 35%,transparent)',
+   labelColor:'#7A5000', titleColor:'#7A5000', dotColor:'#C8850A',
+   desc:'You are still functioning and meeting your responsibilities — but readiness signals suggest strain may be accumulating beneath the surface. This is the Yellow Zone™: the highest-impact window for awareness and support.',
+   steps:[
+     {dot:'#C8850A',text:'Review your highest-scoring signals — these are the areas where small adjustments now create the biggest difference.'},
+     {dot:'#C8850A',text:'Pay particular attention to recovery and hydration. These two areas often stabilize others.'},
+     {dot:'#C8850A',text:'Consider engaging with the HaulWell™ AI Coach for practical, signal-specific guidance.'},
+     {dot:'#C8850A',text:'If available in your program, connect with a Driver Readiness Coach™ for a structured conversation.'},
+   ]},
+  {id:'significant',min:38,max:56,label:'Significant Readiness Strain',
+   bg:'color-mix(in srgb,#B85A00 10%,var(--color-background-primary))',
+   border:'color-mix(in srgb,#B85A00 35%,transparent)',
+   labelColor:'#7A3800', titleColor:'#7A3800', dotColor:'#B85A00',
+   desc:'Multiple readiness signals are present and your Operational Margin™ may be noticeably reduced. You are likely still meeting daily responsibilities — but with less reserve than before. Intentional support at this stage can prevent further decline.',
+   steps:[
+     {dot:'#B85A00',text:'Identify your two or three highest signals and focus there first. Trying to address everything at once rarely works.'},
+     {dot:'#B85A00',text:'Recovery is often the most impactful first target — even small improvements in rest create margin for everything else.'},
+     {dot:'#B85A00',text:'Engage with a Driver Readiness Coach™ if available. The 12-Week Driver Readiness Program is designed for this stage.'},
+     {dot:'#B85A00',text:'The HaulWell™ AI Coach is available now for immediate, practical support between sessions.'},
+   ]},
+  {id:'visible',  min:57, max:75, label:'Visible Performance Problems',
+   bg:'color-mix(in srgb,#B22222 10%,var(--color-background-primary))',
+   border:'color-mix(in srgb,#B22222 35%,transparent)',
+   labelColor:'#7A1515', titleColor:'#7A1515', dotColor:'#B22222',
+   desc:'Your results suggest readiness challenges that may already be affecting your consistency, performance, or wellbeing. This is the stage HaulWell™ exists to prevent — but it is also the stage where direct, structured support creates the clearest path forward.',
+   steps:[
+     {dot:'#B22222',text:'Do not try to address everything at once. Identify your single most elevated signal and start there.'},
+     {dot:'#B22222',text:'Connect with a Driver Readiness Coach™ as soon as possible. This stage benefits most from structured support.'},
+     {dot:'#B22222',text:'If any signals suggest concerns that go beyond readiness — such as persistent health issues — speak with a qualified healthcare provider.'},
+     {dot:'#B22222',text:'The HaulWell™ AI Coach is available for immediate support while you arrange more structured coaching.'},
+   ]},
+];
+
+const SIG_COLORS = ['#2E7D7B','#2E7D7B','#C8850A','#B85A00','#B22222','#2E7D7B','#2E7D7B','#1B2A4A'];
+
+let flat = [], answers = [], current = 0;
+
+function buildFlat() {
+  flat = [];
+  QUESTIONS.forEach((sig,si) => {
+    sig.items.forEach((item,ii) => {
+      flat.push({signal:sig.signal, signalIdx:si, text:item,
+        reversed: REVERSE_ITEMS.has(flat.length)});
+    });
+  });
+}
+
+function startAssess() {
+  buildFlat();
+  answers = new Array(flat.length).fill(null);
+  current = 0;
+  show('ph-q');
+  renderQ();
+}
+
+function show(id) {
+  document.querySelectorAll('.phase').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQ() {
+  const q = flat[current];
+  const pct = Math.round((current/flat.length)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('q-counter').textContent = `Question ${current+1} of ${flat.length}`;
+  document.getElementById('q-signal-name').textContent = q.signal;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('btn-back').style.visibility = current===0 ? 'hidden':'visible';
+
+  const opts = document.getElementById('opts');
+  opts.innerHTML='';
+  OPTS.forEach(o=>{
+    const btn = document.createElement('button');
+    btn.className='opt-btn'+(answers[current]===o.score?' selected':'');
+    btn.innerHTML=`<span class="opt-score">${o.score}</span><span class="opt-label">${o.label}</span>`;
+    btn.onclick=()=>{
+      answers[current]=o.score;
+      opts.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('btn-next').disabled=false;
+      setTimeout(()=>{
+        if(current<flat.length-1){current++;renderQ();}
+        else showResult();
+      },320);
+    };
+    opts.appendChild(btn);
+  });
+  document.getElementById('btn-next').disabled = answers[current]===null;
+  document.getElementById('btn-next').textContent = current===flat.length-1 ? 'See my results' : 'Next →';
+}
+
+function goBack(){if(current>0){current--;renderQ();}}
+function goNext(){
+  if(answers[current]===null)return;
+  if(current<flat.length-1){current++;renderQ();}
+  else showResult();
+}
+
+function calcScore(idx) {
+  const items = flat.filter(f=>f.signalIdx===idx);
+  return items.reduce((s,f,i)=>{
+    const raw = answers[flat.indexOf(f)];
+    const v = (raw===null?0:raw);
+    return s + (f.reversed ? (3-v) : v);
+  },0);
+}
+
+function showResult() {
+  const total = flat.reduce((s,f,i)=>{
+    const v = answers[i]===null?0:answers[i];
+    return s + (f.reversed ? (3-v) : v);
+  },0);
+
+  const zone = ZONES.find(z=>total>=z.min&&total<=z.max)||ZONES[3];
+  const pct = Math.round((total/75)*100);
+
+  const zc = document.getElementById('zone-card');
+  zc.style.background = zone.bg;
+  zc.style.border = `1.5px solid ${zone.border}`;
+  document.getElementById('rz-label').style.color = zone.labelColor;
+  document.getElementById('rz-label').textContent = 'Your readiness zone';
+  document.getElementById('rz-title').style.color = zone.titleColor;
+  document.getElementById('rz-title').textContent = zone.label + (zone.badge ? ' — ' + zone.badge : '');
+  document.getElementById('rz-score').style.color = zone.labelColor;
+  document.getElementById('rz-score').textContent = `Total score: ${total} / 75  (${pct}%)`;
+  document.getElementById('rz-desc').style.color = zone.titleColor;
+  document.getElementById('rz-desc').textContent = zone.desc;
+
+  const bars = document.getElementById('signal-bars');
+  bars.innerHTML='';
+  QUESTIONS.forEach((sig,si)=>{
+    const maxScore = sig.items.length * 3;
+    const score = calcScore(si);
+    const pctBar = Math.round((score/maxScore)*100);
+    const col = SIG_COLORS[si];
+    const div = document.createElement('div');
+    div.className='signal-row';
+    div.innerHTML=`
+      <div class="sig-meta">
+        <span class="sig-name">${sig.signal}</span>
+        <span class="sig-score-txt">${score} / ${maxScore}</span>
+      </div>
+      <div class="sig-track"><div class="sig-fill" style="width:0%;background:${col}" data-w="${pctBar}"></div></div>`;
+    bars.appendChild(div);
+  });
+  setTimeout(()=>{
+    bars.querySelectorAll('.sig-fill').forEach(f=>{
+      f.style.width=f.dataset.w+'%';
+    });
+  },100);
+
+  const ns = document.getElementById('next-steps-list');
+  ns.innerHTML='';
+  zone.steps.forEach(s=>{
+    const d = document.createElement('div');
+    d.className='ns-item';
+    d.innerHTML=`<div class="ns-dot" style="background:${s.dot}"></div><span>${s.text}</span>`;
+    ns.appendChild(d);
+  });
+
+  show('ph-result');
+}
+
+function restart(){
+  answers=[];current=0;
+  show('ph-intro');
+}
+</script>
