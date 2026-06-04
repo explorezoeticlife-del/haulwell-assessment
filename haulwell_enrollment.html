@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HaulWell™ Enroll & Connect — choose the level of driver readiness support that fits where you are.">
+  <title>HaulWell™ · Enroll &amp; Connect</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/tabler-icons.min.css">
+  <style>
+    :root {
+      --hw-navy:  #1B2A4A;
+      --hw-teal:  #2E7D7B;
+      --hw-amber: #C8850A;
+      --hw-green: #2E7D50;
+      --hw-light: #F4F7F9;
+      --font-sans:'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--hw-light); color: var(--hw-navy); -webkit-font-smoothing: antialiased; }
+
+    /* ── Journey nav bar ─────────────────────────────── */
+    .hw-nav-bar { background: var(--hw-navy); padding: 10px 16px 12px; }
+    .hw-nav-inner { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+    .hw-nav-top-row { display: flex; align-items: center; justify-content: space-between; }
+    .hw-nav-brand { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .04em; }
+    .hw-nav-brand .hw-t { color: var(--hw-teal); }
+    .hw-nav-count { font-size: 11px; color: rgba(255,255,255,.42); letter-spacing: .02em; }
+    .hw-nav-steps { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2px; }
+    .hw-nav-steps::-webkit-scrollbar { display: none; }
+    .hw-nav-line { flex: 1; min-width: 12px; max-width: 40px; height: 1.5px; background: rgba(255,255,255,.15); flex-shrink: 0; margin-bottom: 16px; }
+    .hw-nav-line.done { background: var(--hw-teal); }
+    .hw-nav-step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; text-decoration: none; min-width: 50px; }
+    .hw-nav-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; line-height: 1; }
+    .hw-nav-lbl { font-size: 9px; font-weight: 500; white-space: nowrap; letter-spacing: .02em; }
+    .hw-nav-step.done .hw-nav-dot { background: var(--hw-teal); color: #fff; }
+    .hw-nav-step.done .hw-nav-lbl { color: var(--hw-teal); }
+    .hw-nav-step.done:hover .hw-nav-dot { background: #25616F; }
+    .hw-nav-step.current .hw-nav-dot { background: #fff; color: var(--hw-navy); box-shadow: 0 0 0 3px rgba(255,255,255,.18); }
+    .hw-nav-step.current .hw-nav-lbl { color: #fff; font-weight: 700; }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .page-hero { background: var(--hw-navy); color: #fff; padding: 40px 24px 44px; text-align: center; }
+    .journey-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: color-mix(in srgb, var(--hw-teal) 18%, var(--hw-navy));
+      border: 1px solid color-mix(in srgb, var(--hw-teal) 40%, transparent);
+      border-radius: 100px; padding: 6px 16px; margin-bottom: 20px;
+    }
+    .journey-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hw-teal); }
+    .journey-badge span { font-size: 11px; font-weight: 600; color: var(--hw-teal); letter-spacing: .06em; text-transform: uppercase; }
+    .page-hero .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--hw-teal); margin-bottom: 10px; }
+    .page-hero h1 { font-size: clamp(22px, 5vw, 30px); font-weight: 600; line-height: 1.28; margin-bottom: 14px; }
+    .page-hero p { font-size: 14px; color: rgba(255,255,255,.72); line-height: 1.6; max-width: 460px; margin: 0 auto; }
+
+    /* ── Page body ───────────────────────────────────── */
+    .page-wrap { max-width: 680px; margin: 0 auto; padding: 28px 16px 52px; }
+    .sec-eye { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--hw-teal); margin-bottom: 4px; }
+    .sec-title { font-size: 20px; font-weight: 600; color: var(--hw-navy); margin-bottom: 6px; }
+    .sec-sub { font-size: 13px; color: #5a6a7a; line-height: 1.55; margin-bottom: 22px; }
+
+    /* Option cards */
+    .option-card {
+      background: #fff; border: 1.5px solid #DDE3EC; border-radius: 14px;
+      padding: 22px; margin-bottom: 14px;
+      display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: start;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .option-card:hover { border-color: var(--hw-teal); box-shadow: 0 2px 16px rgba(46,125,123,.09); }
+    .option-icon { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .option-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .option-title { font-size: 16px; font-weight: 600; color: var(--hw-navy); line-height: 1.25; }
+    .option-badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; margin-top: 3px; }
+    .option-desc { font-size: 13px; color: #5a6a7a; line-height: 1.6; }
+    .option-best { margin-top: 10px; font-size: 12px; color: #7a8a9a; line-height: 1.5; font-style: italic; }
+    .option-cta {
+      display: inline-block; margin-top: 14px; background: var(--hw-navy); color: #fff;
+      border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 500;
+      text-decoration: none; transition: background .15s;
+    }
+    .option-cta:hover { background: #253b66; }
+
+    /* Guiding quote */
+    .guiding-quote {
+      background: color-mix(in srgb, var(--hw-teal) 7%, white);
+      border-left: 3px solid var(--hw-teal);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px; margin: 28px 0;
+    }
+    .guiding-quote p { font-size: 14px; color: #3a5a5a; line-height: 1.65; font-style: italic; }
+    .guiding-quote strong { font-style: normal; font-weight: 600; color: var(--hw-navy); }
+
+    /* Contact block */
+    .contact-block { background: #fff; border: 1.5px solid #DDE3EC; border-radius: 14px; padding: 24px; }
+    .contact-title { font-size: 16px; font-weight: 600; color: var(--hw-navy); margin-bottom: 6px; }
+    .contact-desc { font-size: 13px; color: #5a6a7a; line-height: 1.55; margin-bottom: 18px; }
+    .contact-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 500;
+      text-decoration: none; border: 1.5px solid #DDE3EC; color: var(--hw-navy); background: #fff;
+      transition: border-color .15s, background .15s;
+    }
+    .contact-btn:hover { border-color: var(--hw-teal); background: color-mix(in srgb, var(--hw-teal) 4%, white); }
+    .contact-btn.primary { background: var(--hw-navy); color: #fff; border-color: var(--hw-navy); }
+    .contact-btn.primary:hover { background: #253b66; border-color: #253b66; }
+
+    /* Footer nav */
+    .hw-nav-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0 0; margin-top: 32px; border-top: 1px solid #DDE3EC; gap: 12px;
+    }
+    .hw-nav-back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 500;
+      text-decoration: none; color: var(--hw-navy); border: 1.5px solid #DDE3EC; background: #fff;
+      transition: border-color .15s;
+    }
+    .hw-nav-back-btn:hover { border-color: var(--hw-teal); }
+
+    /* Page footer */
+    .page-footer { text-align: center; margin-top: 36px; font-size: 11px; color: #8a9ab0; line-height: 2; }
+    .page-footer a { color: var(--hw-teal); text-decoration: none; }
+    .page-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 520px) {
+      .option-card { grid-template-columns: 1fr; }
+      .hw-nav-lbl { font-size: 8px; }
+      .hw-nav-line { min-width: 8px; max-width: 20px; }
+      .contact-row { flex-direction: column; }
+      .hw-nav-footer { flex-direction: column; align-items: stretch; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Journey Nav — Step 6 of 6 ────────────────────────────────────────── -->
+<nav class="hw-nav-bar" role="navigation" aria-label="HaulWell™ Driver Readiness Journey — Step 6 of 6">
+  <div class="hw-nav-inner">
+    <div class="hw-nav-top-row">
+      <div class="hw-nav-brand"><span class="hw-t">HaulWell</span>™ · Driver Readiness Journey</div>
+      <div class="hw-nav-count">Step 6 of 6</div>
+    </div>
+    <div class="hw-nav-steps" role="list">
+      <a class="hw-nav-step done" href="REPLACE_WITH_DEMO_URL" role="listitem" aria-label="Step 1 complete: Overview">
+        <div class="hw-nav-dot">✓</div>
+        <div class="hw-nav-lbl">Overview</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <a class="hw-nav-step done" href="REPLACE_WITH_PROFILE_URL" role="listitem" aria-label="Step 2 complete: Assessment">
+        <div class="hw-nav-dot">✓</div>
+        <div class="hw-nav-lbl">Assessment™</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <a class="hw-nav-step done" href="REPLACE_WITH_SNAPSHOT_URL" role="listitem" aria-label="Step 3 complete: Snapshot">
+        <div class="hw-nav-dot">✓</div>
+        <div class="hw-nav-lbl">Snapshot™</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <a class="hw-nav-step done" href="REPLACE_WITH_COACH_HANDOFF_URL" role="listitem" aria-label="Step 4 complete: AI Coach">
+        <div class="hw-nav-dot">✓</div>
+        <div class="hw-nav-lbl">AI Coach</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <a class="hw-nav-step done" href="REPLACE_WITH_ECOSYSTEM_URL" role="listitem" aria-label="Step 5 complete: Ecosystem">
+        <div class="hw-nav-dot">✓</div>
+        <div class="hw-nav-lbl">Ecosystem</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <div class="hw-nav-step current" role="listitem" aria-current="step">
+        <div class="hw-nav-dot">6</div>
+        <div class="hw-nav-lbl">Enroll</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="journey-badge">
+    <div class="journey-badge-dot"></div>
+    <span>Journey Complete</span>
+  </div>
+  <div class="eyebrow">HaulWell™ · Next Steps</div>
+  <h1>You've seen the full picture.<br>Here's how to go deeper.</h1>
+  <p>You know your readiness zone, your signals, and what the system looks like. The next step is choosing the level of support that fits where you are right now.</p>
+</div>
+
+<!-- ── Main content ──────────────────────────────────────────────────────── -->
+<div class="page-wrap">
+
+  <div class="sec-eye" style="margin-top:4px">Choose your path</div>
+  <div class="sec-title">What kind of support fits you right now?</div>
+  <div class="sec-sub">HaulWell™ meets drivers where they are — not where they think they should be. No pressure to start anywhere other than where you actually are.</div>
+
+  <!-- Option 1 -->
+  <div class="option-card">
+    <div class="option-icon" style="background:color-mix(in srgb,#2E7D7B 12%,white)">🎯</div>
+    <div>
+      <div class="option-head">
+        <div class="option-title">1-on-1 Driver Readiness Coaching</div>
+        <div class="option-badge" style="background:color-mix(in srgb,#2E7D7B 12%,white);color:#2E7D7B">Personal</div>
+      </div>
+      <div class="option-desc">Work directly with a certified health coach trained in the HaulWell™ framework. Sessions are built around your readiness zone, your signals, and your actual driving life — not a generic wellness plan someone wrote in a conference room.</div>
+      <div class="option-best">Best for: Drivers in the Yellow Zone™, drivers managing multiple elevated signals, or anyone who wants structured and personalized support.</div>
+      <a href="REPLACE_WITH_CONTACT_URL" class="option-cta">Schedule a Conversation →</a>
+    </div>
+  </div>
+
+  <!-- Option 2 -->
+  <div class="option-card">
+    <div class="option-icon" style="background:color-mix(in srgb,#1B2A4A 10%,white)">📅</div>
+    <div>
+      <div class="option-head">
+        <div class="option-title">12-Week Driver Readiness Program</div>
+        <div class="option-badge" style="background:color-mix(in srgb,#1B2A4A 10%,white);color:#1B2A4A">12 Wks</div>
+      </div>
+      <div class="option-desc">A structured coaching program built on the 4-pillar Driver Readiness Coach Methodology™ — Awareness, Stabilization, Reinforcement, and Sustainability. Twelve weeks of consistent, focused progress — one habit at a time.</div>
+      <div class="option-best">Best for: Drivers ready to build real consistency across hydration, recovery, stress management, and routine stability over a 12-week window.</div>
+      <a href="REPLACE_WITH_ENROLLMENT_URL" class="option-cta">Learn About the Program →</a>
+    </div>
+  </div>
+
+  <!-- Option 3 -->
+  <div class="option-card">
+    <div class="option-icon" style="background:color-mix(in srgb,#C8850A 10%,white)">🚚</div>
+    <div>
+      <div class="option-head">
+        <div class="option-title">Fleet &amp; Organization Partnership</div>
+        <div class="option-badge" style="background:color-mix(in srgb,#C8850A 10%,white);color:#C8850A">Fleet</div>
+      </div>
+      <div class="option-desc">Bring HaulWell™ to your fleet, CDL school, or driving organization. Includes Driver Readiness Workshops, group coaching, the 25-item Assessment™, and aggregate Coach Dashboard data — at scale.</div>
+      <div class="option-best">Best for: Fleet managers, safety directors, CDL programs, and organizations focused on driver retention and reducing readiness-related disruptions before they become medical or safety events.</div>
+      <a href="REPLACE_WITH_CONTACT_URL" class="option-cta">Start a Conversation →</a>
+    </div>
+  </div>
+
+  <div class="guiding-quote">
+    <p><strong>Not sure which path fits?</strong> That's a fair place to be. Most drivers come to HaulWell™ because something on the road is getting harder to manage — not because they have it all figured out. Reach out and we'll figure it out together. No pitch. Just a real conversation.</p>
+  </div>
+
+  <!-- Contact section -->
+  <div class="contact-block">
+    <div class="contact-title">Just want to connect first?</div>
+    <div class="contact-desc">No commitment required. Reach out through any of these channels and you'll hear back with something useful — not a sales sequence.</div>
+    <div class="contact-row">
+      <a href="REPLACE_WITH_CONTACT_URL" class="contact-btn primary">
+        <i class="ti ti-mail" style="font-size:15px" aria-hidden="true"></i>
+        Send a Message
+      </a>
+      <a href="REPLACE_WITH_CONTACT_URL" class="contact-btn">
+        <i class="ti ti-calendar" style="font-size:15px" aria-hidden="true"></i>
+        Schedule a Call
+      </a>
+      <a href="https://zlhealthcoach.com" class="contact-btn" target="_blank" rel="noopener">
+        <i class="ti ti-world" style="font-size:15px" aria-hidden="true"></i>
+        zlhealthcoach.com
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer nav -->
+  <div class="hw-nav-footer">
+    <a class="hw-nav-back-btn" href="REPLACE_WITH_ECOSYSTEM_URL">
+      ← View Ecosystem
+    </a>
+    <span style="font-size:12px;color:#8a9ab0;text-align:right;line-height:1.4">You've completed the<br>HaulWell™ Driver Readiness Journey</span>
+  </div>
+
+  <!-- Page footer -->
+  <div class="page-footer">
+    HaulWell™ · powered by <a href="https://zlhealthcoach.com" target="_blank" rel="noopener">Zoetic Life Health Coaching</a><br>
+    <a href="REPLACE_WITH_DEMO_URL">Start Over</a>
+    &nbsp;·&nbsp;
+    <a href="REPLACE_WITH_PROFILE_URL">Retake Assessment™</a>
+    &nbsp;·&nbsp;
+    <a href="REPLACE_WITH_CONTACT_URL">Contact</a>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

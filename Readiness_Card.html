@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HaulWell™ Driver Readiness Card — new driver reference card for life after CDL.">
+  <title>HaulWell™ Driver Readiness Card</title>
+
+  <!-- DM Sans font (used throughout the card) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap">
+
+  <!-- Tabler Icons (used for the print button icon) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/tabler-icons.min.css">
+
+  <style>
+    /* ── Original styles — preserved exactly ──────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body { background: #f0f0ec; }
+
+    .card-shell {
+      font-family: 'DM Sans', sans-serif;
+      width: 680px;
+      background: #f0f0ec;
+      padding: 20px;
+    }
+
+    .print-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: #3d5e42; color: #fff; border: none; border-radius: 8px;
+      padding: 9px 18px; font-size: 13px; font-weight: 500;
+      cursor: pointer; margin-bottom: 16px;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: #2e4732; }
+
+    .card { width: 640px; background: #fff; border-radius: 14px; overflow: hidden; border: 0.5px solid #d0cec8; }
+
+    .card-header {
+      background: #3d5e42; padding: 16px 22px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-brand   { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 3px; }
+    .card-title   { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.2; }
+    .card-subtitle{ font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 3px; }
+    .card-badge   { background: rgba(255,255,255,0.15); color: #fff; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); white-space: nowrap; }
+
+    .core-strip { background: #f5f3ef; border-bottom: 1px solid #e5e2dc; padding: 11px 22px; font-size: 12px; line-height: 1.55; color: #4a5040; font-style: italic; }
+    .core-strip strong { font-style: normal; font-weight: 600; color: #3d5e42; }
+
+    .card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .card-col { padding: 16px 18px; border-right: 1px solid #ebe9e4; }
+    .card-col:last-child { border-right: none; }
+
+    .card-row-full { grid-column: 1 / -1; padding: 14px 18px; border-top: 1px solid #ebe9e4; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+    .card-row-full .mini-col { padding: 0 14px; border-right: 1px solid #ebe9e4; }
+    .card-row-full .mini-col:first-child { padding-left: 0; }
+    .card-row-full .mini-col:last-child  { border-right: none; }
+
+    .col-label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3d5e42; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .col-label-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    .check-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 6px; font-size: 11.5px; line-height: 1.45; color: #2e2e2a; }
+    .check-icon { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #b5bdb0; flex-shrink: 0; margin-top: 1px; }
+    .check-icon.filled { background: #3d5e42; border-color: #3d5e42; display: flex; align-items: center; justify-content: center; }
+    .check-icon.filled::after { content: ''; width: 7px; height: 4px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+
+    .signal-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 6px; font-size: 11.5px; line-height: 1.45; color: #2e2e2a; }
+    .signal-dot  { width: 7px; height: 7px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+
+    .margin-section { grid-column: 1 / -1; border-top: 1px solid #ebe9e4; padding: 14px 18px; display: grid; grid-template-columns: 1fr 200px; gap: 20px; align-items: center; }
+    .margin-main-label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3d5e42; margin-bottom: 5px; }
+    .margin-prompt { font-size: 11px; color: #5a5a54; line-height: 1.5; }
+    .margin-prompt strong { font-weight: 600; color: #2e2e2a; display: block; font-size: 11.5px; margin-bottom: 3px; }
+
+    .gauge-wrap { display: flex; flex-direction: column; gap: 4px; }
+    .gauge-labels { display: flex; justify-content: space-between; font-size: 9px; color: #888; font-weight: 500; }
+    .gauge-track  { height: 18px; background: linear-gradient(to right, #d94040, #e88030, #d4b800, #5da04a); border-radius: 9px; position: relative; }
+    .gauge-needle { position: absolute; top: -4px; left: 70%; transform: translateX(-50%); width: 3px; height: 26px; background: #2e2e2a; border-radius: 2px; }
+    .gauge-needle::after { content: 'You'; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 600; color: #2e2e2a; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .gauge-write-line { margin-top: 6px; border-bottom: 1px dashed #c0bdb6; padding-bottom: 14px; font-size: 9.5px; color: #aaa; letter-spacing: 0.03em; }
+
+    .one-thing-section { grid-column: 1 / -1; border-top: 1px solid #ebe9e4; background: #f8f7f4; padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .one-thing-label { font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3d5e42; margin-bottom: 7px; }
+    .write-line      { border-bottom: 1px solid #c8c5be; margin-bottom: 10px; padding-bottom: 12px; font-size: 9.5px; color: #aaa; }
+    .write-line-label{ font-size: 10px; color: #888; margin-bottom: 3px; }
+
+    .card-footer { background: #3d5e42; padding: 9px 22px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-text { font-size: 10px; color: rgba(255,255,255,0.7); }
+    .footer-url  { font-size: 10px; color: rgba(255,255,255,0.9); font-weight: 600; letter-spacing: 0.04em; }
+
+    /* ── Print styles — preserved exactly ───────────────────────────────────── */
+    @media print {
+      body         { background: #fff; }
+      .card-shell  { padding: 0; background: #fff; }
+      .print-btn   { display: none; }
+      .card        { border-radius: 0; border: none; width: 100%; }
+      @page        { margin: 0.5in; size: letter; }
+    }
+
+    /* ── Mobile — card scrolls horizontally on small screens ──────────────── */
+    @media (max-width: 700px) {
+      body         { overflow-x: auto; }
+      .card-shell  { width: auto; min-width: 680px; }
+    }
+
+  /* ── Resource nav bar ───────────────────────────────────────────────────── */
+  .hw-res-bar { background: #1B2A4A; padding: 10px 16px; }
+  .hw-res-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .hw-res-left { display: flex; align-items: center; gap: 9px; }
+  .hw-res-brand { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .04em; font-family: 'DM Sans', sans-serif; }
+  .hw-res-brand .hw-t { color: #2E7D7B; }
+  .hw-res-badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: rgba(255,255,255,.12); color: rgba(255,255,255,.68); padding: 2px 8px; border-radius: 20px; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+  .hw-res-dots { display: flex; align-items: center; gap: 5px; }
+  .hw-res-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .hw-res-dot.done { background: #2E7D7B; }
+  .hw-res-dot.here { background: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.28); }
+  .hw-res-dot.future { background: rgba(255,255,255,.18); }
+  .hw-res-link { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.75); text-decoration: none; border: 1px solid rgba(255,255,255,.2); padding: 5px 11px; border-radius: 7px; transition: background .12s; font-family: 'DM Sans', sans-serif; }
+  .hw-res-link:hover { background: rgba(255,255,255,.1); }
+  /* Footer nav */
+  .hw-res-footer { max-width: 720px; margin: 16px auto 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 20px; gap: 12px; flex-wrap: wrap; }
+  .hw-res-back { display: inline-flex; align-items: center; gap: 5px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: #1B2A4A; border: 1.5px solid #d0cec8; background: #fff; transition: border-color .12s; font-family: 'DM Sans', sans-serif; }
+  .hw-res-back:hover { border-color: #3d5e42; }
+  .hw-res-next { display: inline-flex; align-items: center; gap: 5px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: #fff; background: #1B2A4A; transition: background .12s; font-family: 'DM Sans', sans-serif; }
+  .hw-res-next:hover { background: #253b66; }
+  @media print { .hw-res-bar, .hw-res-footer { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<!-- ── Resource Nav ── Readiness Card is a workshop companion used around Step 2 ── -->
+<nav class="hw-res-bar" role="navigation" aria-label="HaulWell™ Supporting Resource">
+  <div class="hw-res-inner">
+    <div class="hw-res-left">
+      <div class="hw-res-brand"><span class="hw-t">HaulWell</span>™</div>
+      <div class="hw-res-badge">Readiness Card</div>
+      <div class="hw-res-dots" aria-label="Journey progress">
+        <div class="hw-res-dot done" title="Step 1: Overview"></div>
+        <div class="hw-res-dot done" title="Step 2: Assessment™"></div>
+        <div class="hw-res-dot here" title="Resource: Readiness Card"></div>
+        <div class="hw-res-dot future" title="Step 3: Snapshot™"></div>
+        <div class="hw-res-dot future" title="Step 4: AI Coach"></div>
+        <div class="hw-res-dot future" title="Step 5: Ecosystem"></div>
+        <div class="hw-res-dot future" title="Step 6: Enroll"></div>
+      </div>
+    </div>
+    <a class="hw-res-link" href="REPLACE_WITH_PROFILE_URL">← Back to Assessment™</a>
+  </div>
+</nav>
+
+<div class="card-shell">
+  <button class="print-btn" onclick="window.print()">
+    <i class="ti ti-printer" style="font-size:15px" aria-hidden="true"></i>
+    Print this card
+  </button>
+
+  <div class="card">
+
+    <div class="card-header">
+      <div>
+        <div class="card-brand">HaulWell™ by Zoetic Life Health Coaching</div>
+        <div class="card-title">Driver Readiness Card</div>
+        <div class="card-subtitle">Life After CDL — Staying Steady When the Road Gets Real</div>
+      </div>
+      <div class="card-badge">New Driver</div>
+    </div>
+
+    <div class="core-strip">
+      <strong>Remember this:</strong> Passing CDL training prepares you to operate the truck. Life on the road requires learning how to operate yourself under pressure.
+    </div>
+
+    <div class="card-body">
+
+      <!-- Left column: Watch for these signals -->
+      <div class="card-col">
+        <div class="col-label"><div class="col-label-dot" style="background:#c05a3a"></div>Watch for these signals</div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Urine darker than pale yellow — you're already behind on hydration</span></div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Shorter fuse than usual — irritability is a fatigue signal</span></div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Can't sleep even when you have time — stress is running high</span></div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Feeling "flat" but not quite tired — that's margin shrinking</span></div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Saying yes to runs you're not sure about — fatigue talks you into things</span></div>
+        <div class="signal-row"><div class="signal-dot" style="background:#c05a3a"></div><span>Caffeine isn't working the same way it used to</span></div>
+      </div>
+
+      <!-- Right column: Do these first -->
+      <div class="card-col">
+        <div class="col-label"><div class="col-label-dot" style="background:#3d5e42"></div>Do these first</div>
+        <div class="check-row"><div class="check-icon filled"></div><span>Drink water before reaching for caffeine — always</span></div>
+        <div class="check-row"><div class="check-icon"></div><span>Make one realistic food swap per day — not a diet, just one thing</span></div>
+        <div class="check-row"><div class="check-icon"></div><span>Name your margin level each morning — full, half, low, or empty</span></div>
+        <div class="check-row"><div class="check-icon"></div><span>Protect at least one thing that recharges you each week</span></div>
+        <div class="check-row"><div class="check-icon"></div><span>Find one veteran driver and ask them one real question</span></div>
+        <div class="check-row"><div class="check-icon"></div><span>Track your blood pressure at least once a month — get a cuff</span></div>
+      </div>
+
+      <!-- Three-column info row -->
+      <div class="card-row-full">
+        <div class="mini-col">
+          <div class="col-label" style="margin-bottom:7px"><div class="col-label-dot" style="background:#8B3A30"></div>Blood pressure</div>
+          <div style="font-size:11px;line-height:1.5;color:#2e2e2a">You won't feel it early — that's the risk. These things push it up on the road:</div>
+          <div style="margin-top:6px;font-size:11px;line-height:1.6;color:#444">Dehydration &nbsp;·&nbsp; Salt-heavy food &nbsp;·&nbsp; Poor sleep &nbsp;·&nbsp; Chronic stress</div>
+          <div style="margin-top:7px;font-size:10.5px;color:#5a5a54;font-style:italic;line-height:1.4">None of that is your fault — it's built into the job. Knowing is the first step.</div>
+        </div>
+        <div class="mini-col">
+          <div class="col-label" style="margin-bottom:7px"><div class="col-label-dot" style="background:#956030"></div>Hydration reality</div>
+          <div style="font-size:11px;line-height:1.5;color:#2e2e2a">The simple check: pale yellow = good. Darker = you're already behind.</div>
+          <div style="margin-top:7px;font-size:11px;line-height:1.5;color:#2e2e2a">Dehydration causes: headaches, irritability, foggy thinking, and blood pressure creep — before thirst even kicks in.</div>
+          <div style="margin-top:7px;font-size:10.5px;color:#5a5a54;font-style:italic">Target: a water bottle per 2–3 hours of driving.</div>
+        </div>
+        <div class="mini-col">
+          <div class="col-label" style="margin-bottom:7px"><div class="col-label-dot" style="background:#4A6B7A"></div>Fatigue &amp; caffeine</div>
+          <div style="font-size:11px;line-height:1.5;color:#2e2e2a">Fatigue accumulates like a slow leak. You don't feel it building — you just run out of margin.</div>
+          <div style="margin-top:7px;font-size:11px;line-height:1.5;color:#2e2e2a">Caffeine borrows energy from tomorrow. A big energy drink at 2am will ask for that back — with interest.</div>
+          <div style="margin-top:7px;font-size:10.5px;color:#5a5a54;font-style:italic">Natural reset: water, a short walk, 15 minutes of rest.</div>
+        </div>
+      </div>
+
+      <!-- Margin meter -->
+      <div class="margin-section">
+        <div>
+          <div class="margin-main-label">Your margin meter</div>
+          <div class="margin-prompt">
+            <strong>Check in with yourself daily.</strong>
+            Where is your margin right now — the space between "functioning" and "running on empty"? Name it before your body names it for you.
+          </div>
+        </div>
+        <div class="gauge-wrap">
+          <div class="gauge-labels"><span>Empty</span><span>Low</span><span>Half</span><span>Full</span></div>
+          <div class="gauge-track"><div class="gauge-needle"></div></div>
+          <div class="gauge-labels" style="margin-top:2px">
+            <span style="color:#c05a3a">Rest now</span>
+            <span style="color:#c08030">Watch it</span>
+            <span style="color:#9a8a20">Steady</span>
+            <span style="color:#3d5e42">Protected</span>
+          </div>
+          <div class="gauge-write-line">Today my margin is at: ________________________________</div>
+        </div>
+      </div>
+
+      <!-- One thing section -->
+      <div class="one-thing-section">
+        <div>
+          <div class="one-thing-label">My one thing from today</div>
+          <div class="write-line-label">The thing I didn't know — or hadn't thought about this way:</div>
+          <div class="write-line"></div>
+          <div class="write-line-label" style="margin-top:4px">The specific thing I'm going to do in the next 7 days:</div>
+          <div class="write-line"></div>
+          <div class="write-line-label" style="margin-top:4px">I'll do it by:</div>
+          <div class="write-line"></div>
+        </div>
+        <div>
+          <div class="one-thing-label">My veteran to talk to</div>
+          <div class="write-line-label">Name or description of the driver I'll reach out to:</div>
+          <div class="write-line"></div>
+          <div class="write-line-label" style="margin-top:4px">The one question I'll ask them:</div>
+          <div class="write-line"></div>
+          <div style="margin-top:14px;background:#3d5e42;border-radius:7px;padding:9px 12px">
+            <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Remember</div>
+            <div style="font-size:11px;color:#fff;line-height:1.5">Veterans already know everything covered today. Most of them will talk to you if you ask. That one conversation could compress years of learning.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.card-body -->
+
+    <div class="card-footer">
+      <div class="footer-text">HaulWell™ Driver Readiness Workshop &nbsp;·&nbsp; Zoetic Life Health Coaching</div>
+      <div class="footer-url">zlhealthcoach.com</div>
+    </div>
+
+  </div><!-- /.card -->
+</div><!-- /.card-shell -->
+
+<!-- ── Resource Footer Nav ─────────────────────────────────────────────── -->
+<div class="hw-res-footer">
+  <a class="hw-res-back" href="REPLACE_WITH_PROFILE_URL">← Assessment™</a>
+  <a class="hw-res-next" href="REPLACE_WITH_SNAPSHOT_URL">View My Snapshot™ →</a>
+</div>
+
+</body>
+</html>
