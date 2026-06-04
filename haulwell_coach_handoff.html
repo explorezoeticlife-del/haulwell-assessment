@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HaulWell™ Driver Readiness Snapshot™ — bridge from your assessment results into AI-supported coaching.">
+  <title>HaulWell™ Driver Readiness Snapshot™</title>
+
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/tabler-icons.min.css">
+
+  <style>
+    /* ─── CSS variables ────────────────────────────────────────────────────────
+       Fallbacks for standalone use. Squarespace theme variables override these
+       because the theme stylesheet loads first in that context.
+    ─────────────────────────────────────────────────────────────────────────── */
+    :root {
+      --color-text-primary:        #1B2A4A;
+      --color-text-secondary:      #5A6878;
+      --color-text-tertiary:       #8A9AAA;
+      --color-background-primary:  #ffffff;
+      --color-background-secondary:#F4F7F9;
+      --color-border-secondary:    #D0DAE6;
+      --color-border-tertiary:     #E5ECF4;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────────────────────── */
+    .coach-wrap { max-width: 640px; margin: 0 auto; padding: 16px 16px 32px; }
+
+    /* ─── Brand bar ──────────────────────────────────────────────────────────── */
+    .brand-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .brand-mark {
+      font-size: 12px; font-weight: 500;
+      color: var(--color-text-secondary); letter-spacing: .04em;
+    }
+    .brand-mark span { color: #2E7D7B; }
+    .session-badge {
+      font-size: 11px; padding: 3px 10px; border-radius: 20px;
+      background: color-mix(in srgb, #2E7D7B 10%, var(--color-background-primary));
+      color: #2E7D7B;
+      border: 0.5px solid color-mix(in srgb, #2E7D7B 30%, transparent);
+    }
+
+    /* ─── Phases ─────────────────────────────────────────────────────────────── */
+    .phase       { display: none; }
+    .phase.active { display: block; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       PHASE 1 — SETUP
+    ═══════════════════════════════════════════════════════════════════════════ */
+
+    /* Profile card (mini preview in setup phase) */
+    .profile-card {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .profile-zone-bar { padding: 14px 16px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .pz-label {
+      font-size: 10px; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .pz-title  { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+    .pz-score  { font-size: 12px; color: var(--color-text-secondary); }
+    .profile-signals-mini { display: grid; grid-template-columns: repeat(2,1fr); }
+    .sig-mini-cell {
+      padding: 9px 14px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      border-right:  0.5px solid var(--color-border-tertiary);
+    }
+    .sig-mini-cell:nth-child(even)      { border-right: none; }
+    .sig-mini-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .sig-mini-name { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .sig-mini-bar  { height: 5px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden; }
+    .sig-mini-fill { height: 100%; border-radius: 3px; }
+    .sig-mini-val  { font-size: 10px; color: var(--color-text-secondary); margin-top: 3px; }
+
+    .no-profile-card {
+      background: var(--color-background-secondary); border-radius: var(--border-radius-md);
+      padding: 14px 16px; margin-bottom: 14px;
+      font-size: 13px; color: var(--color-text-secondary); line-height: 1.5;
+    }
+    .no-profile-card strong { color: var(--color-text-primary); font-weight: 500; }
+
+    /* Context input */
+    .context-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+    .context-sub   { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 10px; line-height: 1.4; }
+    .context-area {
+      width: 100%; min-height: 80px; padding: 10px 12px;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+      font-size: 14px; font-family: inherit; resize: vertical; line-height: 1.5;
+    }
+    .context-area:focus       { outline: none; border-color: #2E7D7B; }
+    .context-area::placeholder { color: var(--color-text-tertiary); }
+
+    .notice-sm {
+      font-size: 11px; color: var(--color-text-secondary); line-height: 1.4;
+      margin: 10px 0 14px; padding: 8px 12px;
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-secondary);
+    }
+
+    /* Generate button */
+    .btn-generate {
+      width: 100%; padding: 13px;
+      background: #1B2A4A; color: #fff; border: none;
+      border-radius: var(--border-radius-md);
+      font-size: 15px; font-weight: 500; font-family: inherit;
+      cursor: pointer; transition: opacity .15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-generate:hover    { opacity: .88; }
+    .btn-generate:disabled { opacity: .45; cursor: default; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       PHASE 2 — SNAPSHOT
+    ═══════════════════════════════════════════════════════════════════════════ */
+
+    /* Snapshot header */
+    .snapshot-header { margin-bottom: 14px; }
+    .snapshot-title  { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+    .snapshot-sub    { font-size: 12px; color: var(--color-text-secondary); }
+
+    /* ── Margin Meter™ card ── */
+    .mm-card {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 18px 16px 14px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .mm-eyebrow {
+      font-size: 10px; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--color-text-tertiary);
+      margin-bottom: 4px;
+    }
+    .mm-svg {
+      width: 200px; max-width: 80%;
+      display: block; margin: 0 auto;
+      overflow: visible;
+    }
+    /* CSS-driven fill transition — from 0 to final value set via JS */
+    .mm-fill {
+      stroke-dasharray: 0 251.3;
+      transition: stroke-dasharray 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mm-zone-label { font-size: 13px; font-weight: 500; margin-top: 4px; }
+
+    /* ── Zone summary card ── */
+    .zone-summary-card {
+      border-radius: var(--border-radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border: 1px solid;
+    }
+    .zs-eyebrow {
+      font-size: 10px; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .zs-zone-name { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+    .zs-desc      { font-size: 13px; line-height: 1.6; }
+
+    /* ── Signal profile card ── */
+    .signals-card {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .signals-eyebrow {
+      font-size: 10px; font-weight: 500; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--color-text-tertiary);
+      margin-bottom: 12px;
+    }
+    .sig-bar-row   { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .sig-bar-name  { font-size: 12px; color: var(--color-text-secondary); min-width: 130px; flex-shrink: 0; }
+    .sig-bar-track { flex: 1; height: 6px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden; }
+    .sig-bar-fill  { height: 100%; border-radius: 3px; }
+    .sig-bar-score { font-size: 11px; color: var(--color-text-tertiary); width: 28px; text-align: right; flex-shrink: 0; }
+
+    /* ── Coaching prompt card ── */
+    .prompt-card {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .prompt-head { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+    .prompt-sub  { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; margin-bottom: 12px; }
+    .prompt-box  {
+      width: 100%; min-height: 160px; max-height: 210px;
+      padding: 12px;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      background: var(--color-background-secondary);
+      color: var(--color-text-secondary);
+      font-size: 12px; line-height: 1.65;
+      font-family: inherit; resize: none; overflow-y: auto;
+    }
+
+    .prompt-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+    .btn-copy {
+      flex: 1; padding: 11px 10px;
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      font-size: 13px; font-weight: 500;
+      color: var(--color-text-primary);
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: border-color .15s, background .15s, color .15s;
+    }
+    .btn-copy:hover  { border-color: #2E7D7B; }
+    .btn-copy.copied { background: #E3F2EA; border-color: #2E7D50; color: #1F5A38; }
+
+    .btn-open-ai {
+      flex: 1.6; padding: 11px 10px;
+      background: #1B2A4A; color: #fff; border: none;
+      border-radius: var(--border-radius-md);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: opacity .15s;
+    }
+    .btn-open-ai:hover { opacity: .88; }
+
+    .prompt-tip {
+      font-size: 11px; color: var(--color-text-tertiary);
+      text-align: center; margin-top: 8px; line-height: 1.4;
+    }
+
+    /* ── Human CTA — secondary, bottom of page ── */
+    .divider-or {
+      display: flex; align-items: center; gap: 12px;
+      margin: 18px 0 12px;
+      font-size: 11px; color: var(--color-text-tertiary);
+    }
+    .divider-or::before,
+    .divider-or::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+
+    .human-cta { text-align: center; padding-bottom: 4px; }
+    .human-cta-label { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 8px; }
+    .btn-schedule {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px;
+      background: transparent;
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-md);
+      font-size: 13px; color: var(--color-text-secondary);
+      cursor: pointer; font-family: inherit;
+      transition: border-color .15s, color .15s;
+      text-decoration: none;
+    }
+    .btn-schedule:hover { border-color: #2E7D7B; color: var(--color-text-primary); }
+
+    /* New session */
+    .btn-new-session {
+      width: 100%; padding: 10px; margin-top: 14px;
+      background: transparent;
+      border: 0.5px solid var(--color-border-tertiary);
+      color: var(--color-text-tertiary);
+      border-radius: var(--border-radius-md);
+      font-size: 13px; font-family: inherit; cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-new-session:hover { border-color: var(--color-border-secondary); color: var(--color-text-secondary); }
+
+    /* ─── Mobile ─────────────────────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .coach-wrap    { padding: 12px 12px 24px; }
+      .sig-bar-name  { min-width: 105px; font-size: 11px; }
+      .prompt-actions { flex-direction: column; }
+      .btn-copy, .btn-open-ai { flex: none; width: 100%; }
+      .mm-svg        { width: 180px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       HaulWell™ Journey Navigation — Step 3 of 6 · Snapshot™
+       Shared component across all Driver Readiness Journey pages.
+    ═══════════════════════════════════════════════════════════════════════ */
+    .hw-nav-bar { background: #1B2A4A; font-family: var(--font-sans); padding: 10px 16px 12px; }
+    .hw-nav-inner { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+    .hw-nav-top-row { display: flex; align-items: center; justify-content: space-between; }
+    .hw-nav-brand { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .04em; }
+    .hw-nav-brand .hw-t { color: #2E7D7B; }
+    .hw-nav-count { font-size: 11px; color: rgba(255,255,255,.42); }
+    .hw-nav-steps { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2px; }
+    .hw-nav-steps::-webkit-scrollbar { display: none; }
+    .hw-nav-line { flex: 1; min-width: 12px; max-width: 40px; height: 1.5px; background: rgba(255,255,255,.15); flex-shrink: 0; margin-bottom: 16px; }
+    .hw-nav-line.done { background: #2E7D7B; }
+    .hw-nav-step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; text-decoration: none; min-width: 50px; }
+    .hw-nav-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; line-height: 1; }
+    .hw-nav-lbl { font-size: 9px; font-weight: 500; white-space: nowrap; letter-spacing: .02em; }
+    .hw-nav-step.done .hw-nav-dot { background: #2E7D7B; color: #fff; }
+    .hw-nav-step.done .hw-nav-lbl { color: #2E7D7B; }
+    .hw-nav-step.done:hover .hw-nav-dot { background: #25616F; }
+    .hw-nav-step.current .hw-nav-dot { background: #fff; color: #1B2A4A; box-shadow: 0 0 0 3px rgba(255,255,255,.18); }
+    .hw-nav-step.current .hw-nav-lbl { color: #fff; font-weight: 700; }
+    .hw-nav-step.future .hw-nav-dot { background: rgba(255,255,255,.08); color: rgba(255,255,255,.28); border: 1.5px solid rgba(255,255,255,.15); }
+    .hw-nav-step.future .hw-nav-lbl { color: rgba(255,255,255,.25); }
+    .hw-nav-footer { display: flex; align-items: center; justify-content: space-between; max-width: 640px; margin: 24px auto 8px; padding-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); font-family: var(--font-sans); }
+    .hw-nav-back-btn { display: inline-flex; align-items: center; gap: 5px; padding: 9px 14px; background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: 8px; font-size: 13px; color: var(--color-text-secondary); text-decoration: none; font-family: inherit; cursor: pointer; transition: border-color .15s, color .15s; }
+    .hw-nav-back-btn:hover { border-color: #2E7D7B; color: var(--color-text-primary); }
+    .hw-nav-next-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: #1B2A4A; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; color: #fff; text-decoration: none; font-family: inherit; cursor: pointer; transition: opacity .15s; }
+    .hw-nav-next-btn:hover { opacity: .88; }
+    @media (max-width: 480px) {
+      .hw-nav-bar { padding: 8px 12px 10px; }
+      .hw-nav-step { min-width: 42px; }
+      .hw-nav-dot { width: 20px; height: 20px; font-size: 9px; }
+      .hw-nav-lbl { font-size: 8px; }
+      .hw-nav-line { min-width: 8px; max-width: 20px; }
+      .hw-nav-footer { padding-top: 14px; margin-top: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Journey Nav — Step 3 of 6 · Snapshot™ ────────────────────────────── -->
+<nav class="hw-nav-bar" role="navigation" aria-label="HaulWell™ Driver Readiness Journey — Step 3 of 6">
+  <div class="hw-nav-inner">
+    <div class="hw-nav-top-row">
+      <div class="hw-nav-brand"><span class="hw-t">HaulWell</span>™ · Driver Readiness Journey</div>
+      <div class="hw-nav-count">Step 3 of 6</div>
+    </div>
+    <div class="hw-nav-steps" role="list">
+      <a class="hw-nav-step done" href="REPLACE_WITH_DEMO_URL" role="listitem" aria-label="Step 1 Overview — completed">
+        <div class="hw-nav-dot">✓</div><div class="hw-nav-lbl">Overview</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <a class="hw-nav-step done" href="REPLACE_WITH_PROFILE_URL" role="listitem" aria-label="Step 2 Assessment — completed">
+        <div class="hw-nav-dot">✓</div><div class="hw-nav-lbl">Assessment™</div>
+      </a>
+      <div class="hw-nav-line done" aria-hidden="true"></div>
+      <div class="hw-nav-step current" role="listitem" aria-current="step">
+        <div class="hw-nav-dot">3</div><div class="hw-nav-lbl">Snapshot™</div>
+      </div>
+      <div class="hw-nav-line" aria-hidden="true"></div>
+      <div class="hw-nav-step future" role="listitem">
+        <div class="hw-nav-dot">4</div><div class="hw-nav-lbl">AI Coach</div>
+      </div>
+      <div class="hw-nav-line" aria-hidden="true"></div>
+      <div class="hw-nav-step future" role="listitem">
+        <div class="hw-nav-dot">5</div><div class="hw-nav-lbl">Ecosystem</div>
+      </div>
+      <div class="hw-nav-line" aria-hidden="true"></div>
+      <div class="hw-nav-step future" role="listitem">
+        <div class="hw-nav-dot">6</div><div class="hw-nav-lbl">Enroll</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<h2 class="sr-only">HaulWell™ Driver Readiness Snapshot™ — bridge from assessment results into AI-supported coaching</h2>
+
+<div class="coach-wrap">
+
+  <div class="brand-row">
+    <span class="brand-mark"><span>HaulWell</span>™</span>
+    <span class="session-badge">Driver Readiness Snapshot™</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PHASE 1 — SETUP
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="phase active" id="ph-setup">
+
+    <div id="profile-display"></div>
+
+    <div style="margin-bottom:14px">
+      <div class="context-label">Before generating your snapshot — what's been going on?</div>
+      <div class="context-sub">A sentence or two is enough. This gets woven into your personalized coaching prompt.</div>
+      <textarea
+        class="context-area"
+        id="driver-context"
+        placeholder="e.g. Schedule's been brutal lately, not sleeping well, running on caffeine most days…"
+        maxlength="500"
+      ></textarea>
+      <div style="font-size:11px;color:var(--color-text-secondary);text-align:right;margin-top:3px" id="char-count">0 / 500</div>
+    </div>
+
+    <div class="notice-sm">
+      Your results and this session are not shared with your employer. This page generates a personalized
+      coaching prompt you take into the AI Coach — no live API calls run here.
+    </div>
+
+    <button class="btn-generate" id="btn-gen" onclick="generateSnapshot()">
+      <i class="ti ti-chart-bar" aria-hidden="true" style="font-size:17px"></i>
+      Generate My Coaching Snapshot™
+    </button>
+
+  </div><!-- /#ph-setup -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       PHASE 2 — SNAPSHOT + HANDOFF
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="phase" id="ph-snapshot">
+
+    <div class="snapshot-header">
+      <div class="snapshot-title">Driver Readiness Snapshot™</div>
+      <div class="snapshot-sub" id="snap-subtitle"></div>
+    </div>
+
+    <!-- ── 1. Margin Meter™ ─────────────────────────────────── -->
+    <div class="mm-card">
+      <div class="mm-eyebrow">Margin Meter™</div>
+      <div id="mm-svg-container"></div>
+      <div class="mm-zone-label" id="mm-zone-label"></div>
+    </div>
+
+    <!-- ── 2. Zone summary ──────────────────────────────────── -->
+    <div class="zone-summary-card" id="zone-summary-card">
+      <div class="zs-eyebrow" id="zs-eyebrow">Your readiness zone</div>
+      <div class="zs-zone-name" id="zs-zone-name"></div>
+      <div class="zs-desc"      id="zs-desc"></div>
+    </div>
+
+    <!-- ── 3. Signal profile ────────────────────────────────── -->
+    <div class="signals-card">
+      <div class="signals-eyebrow">Readiness Signal™ Profile — most elevated first</div>
+      <div id="signal-bars-snap"></div>
+    </div>
+
+    <!-- ── 4. Personalized coaching prompt ──────────────────── -->
+    <div class="prompt-card">
+      <div class="prompt-head">Your Personalized Coaching Prompt</div>
+      <div class="prompt-sub">
+        Copy this prompt and paste it into the HaulWell™ AI Driver Readiness Coach to begin a
+        session built around your actual results. The AI Coach will open your session using your
+        profile, your context, and your highest signals.
+      </div>
+      <textarea class="prompt-box" id="coaching-prompt" readonly></textarea>
+      <div class="prompt-actions">
+        <button class="btn-copy" id="btn-copy" onclick="copyPrompt()">
+          <i class="ti ti-clipboard" style="font-size:14px"></i>
+          Copy My Coaching Prompt
+        </button>
+        <button class="btn-open-ai" onclick="openAICoach()">
+          <i class="ti ti-robot" style="font-size:14px"></i>
+          Open HaulWell™ AI Coach
+        </button>
+      </div>
+      <div class="prompt-tip">
+        Clicking "Open AI Coach" copies your prompt automatically — paste it into the chat to begin.
+      </div>
+    </div>
+
+    <!-- ── 5. Human support — secondary CTA at bottom only ──── -->
+    <div class="divider-or">or</div>
+    <div class="human-cta">
+      <div class="human-cta-label">Want human support?</div>
+      <button class="btn-schedule" onclick="openBooking()">
+        <i class="ti ti-calendar" style="font-size:14px"></i>
+        Schedule a conversation
+      </button>
+    </div>
+
+    <button class="btn-new-session" onclick="newSession()">← New session</button>
+
+  </div><!-- /#ph-snapshot -->
+
+</div><!-- /.coach-wrap -->
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+//  HaulWell™ Coach Handoff  |  Driver Readiness Snapshot™
+//
+//  Flow:
+//    1. Profile loaded → mini profile card shown in setup phase
+//    2. Driver adds optional context → "Generate My Coaching Snapshot™"
+//    3. Snapshot phase:
+//       a. Margin Meter™ (animated arc gauge)
+//       b. Zone summary card (colored, zone-specific)
+//       c. Signal profile bars (sorted by elevation)
+//       d. Personalized coaching prompt (generated, copyable)
+//       e. "Copy Prompt" + "Open HaulWell™ AI Coach" buttons
+//       f. "Want human support? Schedule a conversation." (secondary, bottom)
+//
+//  ✅ No live Anthropic API calls on this page.
+//  📌 Customize:
+//     AI_COACH_URL  — your AI Coach URL (Claude.ai project, hosted coach, etc.)
+//     BOOKING_URL   — your Calendly or scheduling page URL
+//     buildDemoProfile() — replace with real assessment data integration
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Configuration ─────────────────────────────────────────────────────────────
+const AI_COACH_URL = 'https://claude.ai'; // 🔗 Replace with your HaulWell™ AI Coach link
+const BOOKING_URL  = '#';                  // 🔗 Replace with your scheduling/Calendly URL
+
+// ── Zone definitions ──────────────────────────────────────────────────────────
+const ZONE_CFG = {
+  stable: {
+    label:  'Stable Readiness',
+    hex:    '#2E7D50', bg: '#E3F2EA', border: '#A5D6B5', tc: '#1F5A38',
+    desc:   'Your Operational Margin™ is intact. Signals are in a manageable range and your routines appear to be holding. This is the stage to reinforce what is working — small intentional habits now protect the margin you have built.',
+  },
+  yellow: {
+    label:  'Early Readiness Strain',
+    badge:  'Yellow Zone™',
+    hex:    '#C8850A', bg: '#FDF3E0', border: '#F0C070', tc: '#7A5000',
+    desc:   'You are still functioning and meeting your responsibilities — but your signals suggest strain is accumulating beneath the surface. This is the Yellow Zone™: the highest-impact window for awareness and support. Most drivers wish they had caught it here.',
+  },
+  significant: {
+    label:  'Significant Readiness Strain',
+    hex:    '#B85A00', bg: '#FFF0E6', border: '#F0A070', tc: '#7A3800',
+    desc:   'Multiple signals are elevated and your daily Operational Margin™ is narrowing. You are likely still meeting your responsibilities — but with less reserve than before. Targeted, consistent support at this stage can stop the decline before it becomes visible.',
+  },
+  visible: {
+    label:  'Visible Performance Problems',
+    hex:    '#B22222', bg: '#FDE8E8', border: '#F0A0A0', tc: '#7A1515',
+    desc:   'Your signals are elevated enough to be touching your daily experience. This is the stage HaulWell™ exists to prevent — and also where structured coaching creates the clearest path forward. This is not a fitness-for-duty finding. Readiness can be rebuilt.',
+  },
+};
+
+// ── Signal metadata ───────────────────────────────────────────────────────────
+const SIG_NAMES = [
+  'Recovery Signal™',       'Hydration Signal™',      'Compensation Signal™',
+  'Schedule Strain Signal™','Stress Load Signal™',    'Cognitive Load Signal™',
+  'Routine Stability Signal™', 'Operational Margin Signal™',
+];
+const SIG_SHORT = [
+  'Recovery', 'Hydration', 'Compensation', 'Schedule Strain',
+  'Stress Load', 'Cognitive Load', 'Routine Stability', 'Op. Margin',
+];
+const SIG_HEX = [
+  '#2E7D7B','#2E7D7B','#C8850A','#B85A00',
+  '#B22222','#2E7D7B','#1B2A4A','#1B2A4A',
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let driverProfile  = null;
+let sessionContext = '';
+
+// ── Margin percentage ─────────────────────────────────────────────────────────
+function calcMarginPct(profile) {
+  return Math.round((75 - profile.total) / 75 * 100);
+}
+
+// ── Margin Meter™ SVG ─────────────────────────────────────────────────────────
+//  Semicircular arc gauge.
+//  Arc center (100, 110), radius 80. Circumference: π × 80 ≈ 251.3px.
+//  The arc runs from left (20,110) through the top (100,30) to right (180,110).
+//  Fill grows from the left (low margin) toward the right (full margin).
+//
+//  Animation: CSS transition on stroke-dasharray, triggered by JS after render.
+//    Initial (CSS): stroke-dasharray: 0 251.3 → empty
+//    Final  (JS):   stroke-dasharray: fillLen gapLen → filled to marginPct
+//
+function buildMarginMeterSVG(marginPct, zone) {
+  const arcTotal = 251.3;
+  const fillLen  = (arcTotal * marginPct / 100).toFixed(1);
+  const gapLen   = (arcTotal - Number(fillLen)).toFixed(1);
+
+  return `
+    <svg viewBox="0 0 200 130" fill="none" class="mm-svg"
+         role="img" aria-label="Operational Margin Meter: ${marginPct}%">
+
+      <!-- Background track -->
+      <path d="M 20 110 A 80 80 0 0 1 180 110"
+            stroke="#E5ECF4"
+            stroke-width="16"
+            stroke-linecap="round"/>
+
+      <!-- Margin fill — animated from empty to marginPct via JS -->
+      <path d="M 20 110 A 80 80 0 0 1 180 110"
+            stroke="${zone.hex}"
+            stroke-width="16"
+            stroke-linecap="round"
+            class="mm-fill"
+            id="mm-fill-arc"
+            data-fill="${fillLen}"
+            data-gap="${gapLen}"/>
+
+      <!-- Percentage label -->
+      <text x="100" y="87"
+            text-anchor="middle"
+            fill="${zone.tc}"
+            font-size="30"
+            font-weight="600"
+            font-family="system-ui,-apple-system,sans-serif">${marginPct}%</text>
+
+      <!-- Caption -->
+      <text x="100" y="105"
+            text-anchor="middle"
+            fill="#8A9AAA"
+            font-size="10"
+            letter-spacing=".05em"
+            font-family="system-ui,-apple-system,sans-serif">OPERATIONAL MARGIN™</text>
+
+    </svg>`;
+}
+
+// ── Phase 1 profile display ───────────────────────────────────────────────────
+function renderProfileDisplay(profile) {
+  const el = document.getElementById('profile-display');
+  if (!profile) {
+    el.innerHTML = `
+      <div class="no-profile-card">
+        <strong>No assessment on file.</strong> You can still generate a general coaching prompt,
+        or complete the Driver Readiness Assessment™ first for a profile-specific snapshot.
+      </div>`;
+    return;
+  }
+  const z = ZONE_CFG[profile.zone] ?? ZONE_CFG.stable;
+  const topIdxs = [...profile.sigScores.map((s,i) => ({s,i}))]
+                    .sort((a,b) => b.s - a.s).slice(0,4);
+  el.innerHTML = `
+    <div class="profile-card">
+      <div class="profile-zone-bar" style="background:${z.bg}">
+        <div class="pz-label" style="color:${z.tc}">Assessment profile loaded</div>
+        <div class="pz-title" style="color:${z.tc}">${z.label}${z.badge ? ' — ' + z.badge : ''}</div>
+        <div class="pz-score" style="color:${z.tc}">
+          Score: ${profile.total}/75 &nbsp;·&nbsp;
+          Top signals: ${topIdxs.slice(0,2).map(x => SIG_SHORT[x.i]).join(', ')}
+        </div>
+      </div>
+      <div class="profile-signals-mini">
+        ${topIdxs.map(({s,i}) => {
+          const max = i===7?12:9;
+          const pct = Math.round(s/max*100);
+          return `<div class="sig-mini-cell">
+            <div class="sig-mini-name">${SIG_SHORT[i]}</div>
+            <div class="sig-mini-bar"><div class="sig-mini-fill" style="width:${pct}%;background:${SIG_HEX[i]}"></div></div>
+            <div class="sig-mini-val">${s}/${max}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+// ── Signal bars (snapshot phase, sorted by elevation) ─────────────────────────
+function buildSignalBars(profile) {
+  if (!profile) {
+    return `<div style="font-size:13px;color:var(--color-text-secondary);padding:4px 0">
+      Signal data will appear after completing the Driver Readiness Assessment™.
+    </div>`;
+  }
+  return [...profile.sigScores.map((s,i) => ({s,i}))]
+    .sort((a,b) => b.s - a.s)
+    .map(({s,i}) => {
+      const max = i===7?12:9;
+      const pct = Math.round(s/max*100);
+      return `<div class="sig-bar-row">
+        <div class="sig-bar-name">${SIG_SHORT[i]}</div>
+        <div class="sig-bar-track">
+          <div class="sig-bar-fill" style="width:${pct}%;background:${SIG_HEX[i]}"></div>
+        </div>
+        <div class="sig-bar-score">${s}/${max}</div>
+      </div>`;
+    }).join('');
+}
+
+// ── Personalized coaching prompt ──────────────────────────────────────────────
+function buildCoachingPrompt(profile, ctx) {
+  // No profile — general readiness conversation
+  if (!profile) {
+    return [
+      'I am a commercial driver seeking practical wellness coaching using the HaulWell™ Driver Readiness framework.',
+      '',
+      ctx ? `Here is what I have been experiencing lately:\n"${ctx}"\n` : '',
+      'Please start by explaining the eight HaulWell™ Readiness Signals™ and ask me one question to help identify where I should begin.',
+      '',
+      'Please use driver-realistic, everyday language — not clinical terms.',
+      'Focus on practical, preventive habits. Keep the tone supportive and forward-thinking.',
+    ].filter(Boolean).join('\n');
+  }
+
+  const z         = ZONE_CFG[profile.zone] ?? ZONE_CFG.stable;
+  const marginPct = calcMarginPct(profile);
+  const topSigs   = [...profile.sigScores.map((s,i) => ({s,i}))]
+                      .sort((a,b) => b.s - a.s).slice(0,3);
+  const sigLines  = topSigs.map(({s,i}) => {
+    const max = i===7?12:9;
+    return `  • ${SIG_NAMES[i]}: ${s}/${max}`;
+  }).join('\n');
+  const ctxBlock  = ctx
+    ? `\nAdditional context — what I have been experiencing:\n"${ctx}"\n`
+    : '';
+
+  return [
+    'I am a commercial driver who recently completed the HaulWell™ Driver Readiness Assessment.',
+    '',
+    'My results:',
+    `  • Readiness Zone: ${z.label}${z.badge ? ' (' + z.badge + ')' : ''}`,
+    `  • Total Score: ${profile.total} out of 75`,
+    `  • Operational Margin™: ${marginPct}%`,
+    '',
+    'My most elevated Readiness Signals™:',
+    sigLines,
+    ctxBlock,
+    'I am looking for practical, preventive coaching guidance. Please:',
+    '  • Use driver-realistic, everyday language — not clinical terms',
+    '  • Focus on small, sustainable habits that fit within a commercial driving schedule',
+    '  • Connect suggestions to hydration, sleep consistency, stress, and daily routines',
+    '  • Avoid recommending supplements or complex protocols',
+    '  • Keep the tone supportive — I am still functioning and want to stay that way',
+    '',
+    'Please start by acknowledging my profile, then ask me one focused question about my highest signal to begin the conversation.',
+  ].join('\n');
+}
+
+// ── Generate snapshot (main handler) ─────────────────────────────────────────
+function generateSnapshot() {
+  sessionContext = document.getElementById('driver-context').value.trim();
+
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader" style="font-size:17px"></i> Building your snapshot…';
+
+  const z = driverProfile ? (ZONE_CFG[driverProfile.zone] ?? ZONE_CFG.stable) : null;
+
+  // ── Subtitle ──
+  document.getElementById('snap-subtitle').textContent = driverProfile
+    ? `Score ${driverProfile.total}/75 · ${calcMarginPct(driverProfile)}% Operational Margin™`
+    : 'General readiness session — no assessment on file';
+
+  // ── Margin Meter™ ──
+  if (driverProfile && z) {
+    document.getElementById('mm-svg-container').innerHTML =
+      buildMarginMeterSVG(calcMarginPct(driverProfile), z);
+    document.getElementById('mm-zone-label').textContent = z.label + (z.badge ? ' · ' + z.badge : '');
+    document.getElementById('mm-zone-label').style.color = z.tc;
+
+    // Trigger fill animation after paint
+    requestAnimationFrame(() => setTimeout(() => {
+      const arc = document.getElementById('mm-fill-arc');
+      if (arc) arc.style.strokeDasharray = `${arc.dataset.fill} ${arc.dataset.gap}`;
+    }, 80));
+  } else {
+    document.getElementById('mm-svg-container').innerHTML =
+      '<div style="padding:20px 0 12px;font-size:13px;color:var(--color-text-secondary)">No profile loaded</div>';
+    document.getElementById('mm-zone-label').textContent = 'Complete the assessment for a personalized meter';
+    document.getElementById('mm-zone-label').style.color = 'var(--color-text-tertiary)';
+  }
+
+  // ── Zone summary ──
+  const zCard = document.getElementById('zone-summary-card');
+  if (driverProfile && z) {
+    zCard.style.background    = z.bg;
+    zCard.style.borderColor   = z.border;
+    document.getElementById('zs-eyebrow').style.color    = z.tc;
+    document.getElementById('zs-zone-name').textContent  = z.label + (z.badge ? ' — ' + z.badge : '');
+    document.getElementById('zs-zone-name').style.color  = z.tc;
+    document.getElementById('zs-desc').textContent       = z.desc;
+    document.getElementById('zs-desc').style.color       = z.tc;
+    zCard.style.display = '';
+  } else {
+    zCard.style.display = 'none';
+  }
+
+  // ── Signal bars ──
+  document.getElementById('signal-bars-snap').innerHTML = buildSignalBars(driverProfile);
+
+  // ── Coaching prompt ──
+  document.getElementById('coaching-prompt').value =
+    buildCoachingPrompt(driverProfile, sessionContext);
+
+  show('ph-snapshot');
+}
+
+// ── Copy prompt ───────────────────────────────────────────────────────────────
+function copyPrompt() {
+  const text = document.getElementById('coaching-prompt').value;
+  const btn  = document.getElementById('btn-copy');
+
+  const confirm = () => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i> Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="ti ti-clipboard" style="font-size:14px"></i> Copy My Coaching Prompt';
+    }, 2500);
+  };
+
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(confirm).catch(() => fallbackCopy(text, confirm));
+  } else {
+    fallbackCopy(text, confirm);
+  }
+}
+
+function fallbackCopy(text, callback) {
+  const ta = document.getElementById('coaching-prompt');
+  ta.select();
+  try { document.execCommand('copy'); callback(); } catch(e) {}
+}
+
+// ── Open AI Coach ─────────────────────────────────────────────────────────────
+//  Copies prompt automatically, then opens the AI Coach in a new tab.
+//  Driver pastes the prompt to begin a personalized session.
+function openAICoach() {
+  const text = document.getElementById('coaching-prompt').value;
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => showCopyConfirm())
+      .catch(() => {});
+  } else {
+    fallbackCopy(text, showCopyConfirm);
+  }
+  window.open(AI_COACH_URL, '_blank');
+}
+
+function showCopyConfirm() {
+  const btn = document.getElementById('btn-copy');
+  btn.classList.add('copied');
+  btn.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i> Copied!';
+  setTimeout(() => {
+    btn.classList.remove('copied');
+    btn.innerHTML = '<i class="ti ti-clipboard" style="font-size:14px"></i> Copy My Coaching Prompt';
+  }, 2500);
+}
+
+// ── Booking (secondary) ───────────────────────────────────────────────────────
+function openBooking() {
+  if (BOOKING_URL && BOOKING_URL !== '#') {
+    window.open(BOOKING_URL, '_blank');
+  } else {
+    // Placeholder until booking link is configured
+    alert('Scheduling link coming soon — contact your Driver Readiness Coach™ directly to arrange a session.');
+  }
+}
+
+// ── Phase control ─────────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── New session ───────────────────────────────────────────────────────────────
+function newSession() {
+  document.getElementById('driver-context').value = '';
+  document.getElementById('char-count').textContent = '0 / 500';
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-chart-bar" style="font-size:17px"></i> Generate My Coaching Snapshot™';
+  show('ph-setup');
+}
+
+// ── Demo profile ──────────────────────────────────────────────────────────────
+//  Replace buildDemoProfile() with real assessment data.
+//  Integration options:
+//    • URL param:       JSON.parse(decodeURIComponent(new URLSearchParams(location.search).get('profile')))
+//    • sessionStorage:  JSON.parse(sessionStorage.getItem('hwProfile'))
+//    • postMessage:     window.addEventListener('message', e => { driverProfile = e.data.profile; })
+function buildDemoProfile() {
+  return {
+    zone:      'yellow',
+    total:     29,
+    sigScores: [6, 4, 7, 6, 5, 4, 5, 7],
+    //          ^Recovery ^Compensation ^Stress ^Routine
+    //             ^Hydration ^Schedule ^Cognitive ^OpMargin
+  };
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  driverProfile = buildDemoProfile(); // swap with real data source
+  renderProfileDisplay(driverProfile);
+
+  document.getElementById('driver-context').addEventListener('input', function () {
+    document.getElementById('char-count').textContent = this.value.length + ' / 500';
+  });
+});
+</script>
+
+<!-- ── Journey Footer — Snapshot™ Step 3 ─────────────────────────────────────
+     Step 4 (AI Coach) happens via "Open HaulWell™ AI Coach" inside this page.
+     After coaching, "View Ecosystem →" takes the driver to Step 5.
+─────────────────────────────────────────────────────────────────────────── -->
+<div class="hw-nav-footer" role="navigation" aria-label="Journey page navigation">
+  <a class="hw-nav-back-btn" href="REPLACE_WITH_PROFILE_URL">← Assessment™</a>
+  <a class="hw-nav-next-btn" href="REPLACE_WITH_ECOSYSTEM_URL"
+     aria-label="Proceed to the HaulWell™ Ecosystem Map — Step 5">
+    View Ecosystem →
+  </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HaulWell™ Coach Dashboard — aggregate cohort signal data and zone distribution.">
+  <title>HaulWell™ Coach Cohort Dashboard</title>
+
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/tabler-icons.min.css">
+
+  <!-- Chart.js (moved to <head> for reliable availability on load) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+  <style>
+    /* ─── CSS variables ─────────────────────────────────────────────────────────
+       Fallbacks for standalone use. Squarespace theme variables override these.
+    ─────────────────────────────────────────────────────────────────────────── */
+    :root {
+      --color-text-primary:        #1B2A4A;
+      --color-text-secondary:      #5A6878;
+      --color-text-tertiary:       #8A9AAA;
+      --color-background-primary:  #ffffff;
+      --color-background-secondary:#F4F7F9;
+      --color-border-secondary:    #D0DAE6;
+      --color-border-tertiary:     #E5ECF4;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0;
+      margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+
+    /* ── Original styles — preserved exactly ──────────────────────────────── */
+    .dash { padding: 20px 0 32px; }
+    .dash-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .dash-brand { font-size: 11px; font-weight: 500; letter-spacing: .06em; color: var(--color-text-secondary); text-transform: uppercase; }
+    .dash-brand span { color: #2E7D7B; }
+    .cohort-selector { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-text-secondary); }
+    .cohort-selector select { font-size: 13px; padding: 4px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+    .cohort-selector select:focus { outline: none; }
+
+    .privacy-notice { background: color-mix(in srgb, #2E7D7B 7%, var(--color-background-primary)); border: 0.5px solid color-mix(in srgb, #2E7D7B 25%, transparent); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 20px; }
+    .privacy-notice strong { color: #2E7D7B; font-weight: 500; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 20px; }
+    .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px; }
+    .metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; font-weight: 500; }
+    .metric-val   { font-size: 26px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+    .metric-sub   { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; }
+    .metric-chip  { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 20px; margin-top: 5px; }
+
+    .section-head { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between; }
+    .section-sub  { font-size: 12px; color: var(--color-text-secondary); font-weight: 400; }
+
+    .zone-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 20px; }
+    .zone-tile  { border-radius: var(--border-radius-md); padding: 14px; border: 1px solid transparent; }
+    .zone-tile-label { font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+    .zone-tile-count { font-size: 28px; font-weight: 500; line-height: 1; margin-bottom: 2px; }
+    .zone-tile-pct   { font-size: 12px; margin-bottom: 8px; }
+    .zone-bar        { height: 4px; border-radius: 2px; background: rgba(0,0,0,.1); }
+    .zone-bar-fill   { height: 100%; border-radius: 2px; }
+
+    .two-col { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px; margin-bottom: 20px; }
+    .card    { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+
+    .sig-row    { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; border-radius: 6px; padding: 4px 6px; transition: background .12s; }
+    .sig-row:hover  { background: var(--color-background-secondary); }
+    .sig-row.active { background: var(--color-background-secondary); outline: 1.5px solid #2E7D7B; }
+    .sig-name   { font-size: 12px; font-weight: 500; color: var(--color-text-primary); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sig-track  { flex: 0 0 90px; height: 7px; background: var(--color-background-secondary); border-radius: 4px; overflow: hidden; }
+    .sig-fill   { height: 100%; border-radius: 4px; transition: width .5s ease; }
+    .sig-pct    { font-size: 11px; color: var(--color-text-secondary); flex: 0 0 32px; text-align: right; }
+    .elevated-badge { font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 10px; flex-shrink: 0; }
+
+    .driver-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .driver-table th { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-align: left; padding: 6px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .driver-table td { padding: 7px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: middle; }
+    .driver-table tr:last-child td { border-bottom: none; }
+    .driver-table tr:hover td { background: var(--color-background-secondary); }
+    .zone-pill  { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+    .action-btn { font-size: 11px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: border-color .12s, color .12s; font-family: inherit; }
+    .action-btn:hover { border-color: #2E7D7B; color: #2E7D7B; }
+
+    .insight-block { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px; margin-bottom: 10px; border-left: 3px solid #2E7D7B; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+    .insight-block.warn  { border-left-color: #C8850A; }
+    .insight-block.alert { border-left-color: #B85A00; }
+    .insight-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+    .insight-body  { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+    .ask-btn { width: 100%; padding: 10px; background: #1B2A4A; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity .15s; }
+    .ask-btn:hover { opacity: .88; }
+
+    .sort-btn    { background: none; border: none; cursor: pointer; font-size: 11px; color: var(--color-text-secondary); padding: 0 2px; }
+    .sort-btn:hover { color: var(--color-text-primary); }
+    .filter-row  { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .filter-chip { font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); cursor: pointer; color: var(--color-text-secondary); font-family: inherit; transition: border-color .12s, background .12s; }
+    .filter-chip.on { border-color: #2E7D7B; background: color-mix(in srgb, #2E7D7B 10%, var(--color-background-primary)); color: #1F5A38; }
+
+    /* ── Toast notification (replaces sendPrompt cross-widget call) ─────────── */
+    @keyframes toastInOut {
+      0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    }
+    .hw-toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #1B2A4A; color: #fff;
+      padding: 10px 18px; border-radius: var(--border-radius-md);
+      font-size: 13px; font-family: var(--font-sans);
+      z-index: 9999; white-space: nowrap;
+      animation: toastInOut 2.5s ease forwards;
+      pointer-events: none;
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .zone-strip  { grid-template-columns: repeat(2, 1fr); }
+      .two-col     { grid-template-columns: 1fr; }
+    }
+
+  /* ── Resource nav bar (Coach resource) ──────────────────────────────────── */
+  .hw-res-bar { background: #1B2A4A; padding: 10px 16px; }
+  .hw-res-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .hw-res-left { display: flex; align-items: center; gap: 9px; }
+  .hw-res-brand { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .04em; }
+  .hw-res-brand .hw-t { color: #2E7D7B; }
+  .hw-res-badge { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: rgba(255,255,255,.12); color: rgba(255,255,255,.68); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .hw-res-dots { display: flex; align-items: center; gap: 5px; }
+  .hw-res-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .hw-res-dot.done { background: #2E7D7B; }
+  .hw-res-dot.here { background: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,.28); }
+  .hw-res-dot.future { background: rgba(255,255,255,.18); }
+  .hw-res-link { font-size: 12px; font-weight: 500; color: rgba(255,255,255,.75); text-decoration: none; border: 1px solid rgba(255,255,255,.2); padding: 5px 11px; border-radius: 7px; transition: background .12s; }
+  .hw-res-link:hover { background: rgba(255,255,255,.1); }
+  /* Footer nav */
+  .hw-res-footer { max-width: 760px; margin: 28px auto 0; display: flex; justify-content: space-between; align-items: center; padding: 20px 0 24px; border-top: 1px solid rgba(0,0,0,.08); gap: 12px; flex-wrap: wrap; }
+  .hw-res-back { display: inline-flex; align-items: center; gap: 5px; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: #1B2A4A; border: 1.5px solid #D0DAE6; background: #fff; transition: border-color .12s; }
+  .hw-res-back:hover { border-color: #2E7D7B; }
+  .hw-res-next { display: inline-flex; align-items: center; gap: 5px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: #fff; background: #1B2A4A; transition: background .12s; }
+  .hw-res-next:hover { background: #253b66; }
+  </style>
+</head>
+<body>
+
+
+<!-- ── Resource Nav ── Coach Dashboard is a coach-only resource, related to Step 3 ── -->
+<nav class="hw-res-bar" role="navigation" aria-label="HaulWell™ Coach Resource">
+  <div class="hw-res-inner">
+    <div class="hw-res-left">
+      <div class="hw-res-brand"><span class="hw-t">HaulWell</span>™</div>
+      <div class="hw-res-badge">Coach Resource</div>
+      <div class="hw-res-dots" aria-label="Related to Step 3: Snapshot">
+        <div class="hw-res-dot done" title="Step 1: Overview"></div>
+        <div class="hw-res-dot done" title="Step 2: Assessment™"></div>
+        <div class="hw-res-dot done" title="Step 3: Snapshot™"></div>
+        <div class="hw-res-dot here" title="Coach Dashboard"></div>
+        <div class="hw-res-dot future" title="Step 5: Ecosystem"></div>
+        <div class="hw-res-dot future" title="Step 6: Enroll"></div>
+      </div>
+    </div>
+    <a class="hw-res-link" href="REPLACE_WITH_SNAPSHOT_URL">← Back to Snapshot™</a>
+  </div>
+</nav>
+
+<h2 class="sr-only">HaulWell™ Coach Dashboard — aggregate cohort signal data and zone distribution</h2>
+
+<div class="dash">
+
+  <div class="dash-header">
+    <div>
+      <div class="dash-brand"><span>HaulWell</span>™ — Coach Dashboard</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Aggregate cohort data · Individual results are not displayed</div>
+    </div>
+    <div class="cohort-selector">
+      <i class="ti ti-users" aria-hidden="true" style="font-size:15px"></i>
+      <select id="cohort-sel" onchange="loadCohort(this.value)">
+        <option value="0">Cohort A — Fleet Alpha (18 drivers)</option>
+        <option value="1">Cohort B — CDL Spring Class (24 drivers)</option>
+        <option value="2">Cohort C — Regional Fleet (31 drivers)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="privacy-notice">
+    <strong>Coach view — aggregate data only.</strong> Individual driver scores and assessment responses are not accessible through this dashboard. All data shown reflects cohort-level patterns only, in accordance with HaulWell™ driver privacy principles.
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-label">Drivers assessed</div>
+      <div class="metric-val" id="m-total">—</div>
+      <div class="metric-sub" id="m-completion">— completion rate</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Avg. readiness score</div>
+      <div class="metric-val" id="m-avg">—</div>
+      <div class="metric-sub">out of 75</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">In Yellow Zone™ or above</div>
+      <div class="metric-val" id="m-strain">—</div>
+      <div class="metric-chip" id="m-strain-chip">—</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Most elevated signal</div>
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-top:4px;line-height:1.3" id="m-topsig">—</div>
+      <div class="metric-sub" id="m-topsig-sub">cohort avg.</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    Zone distribution <span class="section-sub">All assessed drivers</span>
+  </div>
+  <div class="zone-strip" id="zone-strip"></div>
+
+  <div class="two-col">
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px">Signal profile</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">Avg. % of max score per signal · tap to filter drivers</div>
+      <div id="sig-bars"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px">Coach insights</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">Auto-generated from cohort patterns</div>
+      <div id="insights"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+      Driver roster — zone placement
+      <span style="font-size:12px;color:var(--color-text-secondary);font-weight:400">Names anonymised · sorted by score</span>
+    </div>
+    <div class="filter-row">
+      <span style="font-size:11px;color:var(--color-text-secondary)">Filter:</span>
+      <button class="filter-chip on" data-zone="all"         onclick="setFilter('all')">All zones</button>
+      <button class="filter-chip"    data-zone="stable"      onclick="setFilter('stable')">Stable</button>
+      <button class="filter-chip"    data-zone="yellow"      onclick="setFilter('yellow')">Yellow Zone™</button>
+      <button class="filter-chip"    data-zone="significant" onclick="setFilter('significant')">Significant strain</button>
+      <button class="filter-chip"    data-zone="visible"     onclick="setFilter('visible')">Visible problems</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="driver-table" aria-label="Driver roster with zone placement and top signal">
+        <thead>
+          <tr>
+            <th style="width:80px">Driver ID</th>
+            <th style="width:80px">Score</th>
+            <th style="width:150px">Zone</th>
+            <th style="width:170px">Top signal</th>
+            <th style="width:80px">Action</th>
+          </tr>
+        </thead>
+        <tbody id="driver-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:20px"></div>
+
+  <div style="position:relative;height:220px;margin-bottom:8px">
+    <canvas id="trendChart" role="img" aria-label="Bar chart showing zone distribution of the selected cohort"></canvas>
+  </div>
+  <div style="display:flex;justify-content:center;gap:20px;font-size:12px;color:var(--color-text-secondary);margin-bottom:20px" id="chart-legend"></div>
+
+  <!-- ── Replaced sendPrompt → buildCohortPrompt + copy + open AI coach ───── -->
+  <button class="ask-btn" onclick="openAICoach()">
+    <i class="ti ti-robot" aria-hidden="true" style="font-size:16px"></i>
+    Copy cohort coaching prompt &amp; open HaulWell™ AI Coach ↗
+  </button>
+
+</div><!-- /.dash -->
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+//  HaulWell™ Coach Cohort Dashboard
+//
+//  ✅ sendPrompt() redefined to copy-to-clipboard + toast (no Squarespace widget)
+//  ✅ "Ask AI Coach" button upgraded: builds a data-driven prompt from the
+//     current cohort and opens AI_COACH_URL in a new tab
+//  ✅ Chart.js loaded in <head> for reliable availability
+//  ✅ All dashboard logic, cohort generation, filters, and chart rendering
+//     are preserved exactly from the original
+//
+//  📌 Update AI_COACH_URL to your actual HaulWell™ AI Coach link.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const AI_COACH_URL = 'https://claude.ai'; // 🔗 Replace with your AI Coach URL
+
+// ── Signal metadata ───────────────────────────────────────────────────────────
+const SIGS     = ['Recovery','Hydration','Compensation','Schedule Strain','Stress Load','Cognitive Load','Routine Stability','Op. Margin'];
+const SIG_FULL = ['Recovery Signal™','Hydration Signal™','Compensation Signal™','Schedule Strain Signal™','Stress Load Signal™','Cognitive Load Signal™','Routine Stability Signal™','Operational Margin Signal™'];
+const SIG_HEX  = ['#2E7D7B','#2E7D7B','#C8850A','#B85A00','#B22222','#2E7D7B','#1B2A4A','#1B2A4A'];
+
+const ZONES_CFG = [
+  { id:'stable',      label:'Stable Readiness',           hex:'#2E7D50', bg:'#E3F2EA', tc:'#1F5A38', min:0,  max:18 },
+  { id:'yellow',      label:'Yellow Zone™',                hex:'#C8850A', bg:'#FDF3E0', tc:'#7A5000', min:19, max:37 },
+  { id:'significant', label:'Significant Readiness Strain',hex:'#B85A00', bg:'#FFF0E6', tc:'#7A3800', min:38, max:56 },
+  { id:'visible',     label:'Visible Problems',            hex:'#B22222', bg:'#FDE8E8', tc:'#7A1515', min:57, max:75 },
+];
+
+function zoneFor(score) { return ZONES_CFG.find(z => score >= z.min && score <= z.max) || ZONES_CFG[3]; }
+
+function makeName(i) {
+  const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  return 'Driver ' + letters[Math.floor(i / letters.length) % letters.length] + letters[i % letters.length];
+}
+
+function seedRand(seed) {
+  let s = seed;
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+function genCohort(n, seed, bias) {
+  const rng = seedRand(seed);
+  return Array.from({ length: n }, (_, i) => {
+    const baseBias = bias + rng() * 10 - 5;
+    const sigScores = SIGS.map((_, si) => {
+      const sigBias = si >= 4 ? baseBias * 1.2 : baseBias * 0.9;
+      return Math.min(9, Math.max(0, Math.round(sigBias / 8 * 9 + rng() * 3 - 1)));
+    });
+    const total  = Math.min(75, Math.max(0, sigScores.reduce((a, b) => a + b, 0)));
+    const topSig = sigScores.indexOf(Math.max(...sigScores));
+    return { id: makeName(i), score: total, sigScores, topSig, zone: zoneFor(total) };
+  });
+}
+
+const COHORTS = [
+  { name: 'Cohort A — Fleet Alpha',      total: 18, assessed: 18, drivers: genCohort(18, 42, 28) },
+  { name: 'Cohort B — CDL Spring Class', total: 28, assessed: 24, drivers: genCohort(24, 99, 22) },
+  { name: 'Cohort C — Regional Fleet',   total: 31, assessed: 31, drivers: genCohort(31, 77, 35) },
+];
+
+let activeFilter  = 'all';
+let activeSig     = null;
+let chartInst     = null;
+let currentCohort = COHORTS[0];
+
+// ── sendPrompt: copies coaching context to clipboard + shows toast ────────────
+//  Original called a Squarespace cross-widget function; replaced with
+//  clipboard copy + a temporary toast notification.
+function sendPrompt(text) {
+  const copy = () => showToast('Coaching prompt copied to clipboard');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(copy).catch(() => fallbackCopy(text, copy));
+  } else {
+    fallbackCopy(text, copy);
+  }
+}
+
+function fallbackCopy(text, callback) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); callback(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'hw-toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
+// ── Build data-driven cohort coaching prompt ──────────────────────────────────
+function buildCohortPrompt() {
+  const { drivers, name } = currentCohort;
+  const avg       = Math.round(drivers.reduce((s, d) => s + d.score, 0) / drivers.length);
+  const strained  = drivers.filter(d => d.score >= 19).length;
+  const strainPct = Math.round(strained / drivers.length * 100);
+  const sigAvgs   = SIGS.map((_, si) => drivers.reduce((s, d) => s + d.sigScores[si], 0) / drivers.length);
+  const topSigIdx = sigAvgs.indexOf(Math.max(...sigAvgs));
+  const topSigPct = Math.round(sigAvgs[topSigIdx] / 9 * 100);
+  const visCount  = drivers.filter(d => d.zone.id === 'visible').length;
+
+  const zoneCounts = ZONES_CFG.map(z => ({
+    label: z.label,
+    count: drivers.filter(d => d.zone.id === z.id).length,
+  }));
+
+  return [
+    'I am a Driver Readiness Coach using the HaulWell™ system. Here is the current cohort data:\n',
+    `Cohort: ${name}`,
+    `Drivers assessed: ${drivers.length}`,
+    `Average readiness score: ${avg}/75`,
+    `In Yellow Zone™ or above: ${strained} drivers (${strainPct}%)`,
+    `Most elevated signal: ${SIG_FULL[topSigIdx]} (${topSigPct}% of max, cohort avg.)`,
+    visCount > 0 ? `Drivers in Visible Performance Problems: ${visCount}` : '',
+    '',
+    'Zone distribution:',
+    ...zoneCounts.map(z => `  • ${z.label}: ${z.count} driver${z.count !== 1 ? 's' : ''}`),
+    '',
+    'Top 3 elevated signals (cohort avg.):',
+    ...[...sigAvgs.map((v,i) => ({v,i}))].sort((a,b) => b.v-a.v).slice(0,3)
+      .map(({v,i}) => `  • ${SIG_FULL[i]}: ${Math.round(v/9*100)}% avg. elevation`),
+    '',
+    'Based on this cohort data:',
+    '  1. What coaching priorities should I focus on this week?',
+    '  2. Which signals should I address first in group sessions?',
+    '  3. Which drivers (by zone or signal profile) would benefit most from individual check-ins?',
+    '',
+    'Please keep guidance driver-realistic, preventive, and focused on small sustainable habits.',
+  ].filter(line => line !== undefined).join('\n');
+}
+
+// ── Open AI Coach: copy cohort prompt + open in new tab ───────────────────────
+function openAICoach() {
+  const prompt = buildCohortPrompt();
+  sendPrompt(prompt); // copies to clipboard + shows toast
+  setTimeout(() => window.open(AI_COACH_URL, '_blank'), 400);
+}
+
+// ── Cohort loading and filter ─────────────────────────────────────────────────
+function loadCohort(idx) {
+  currentCohort = COHORTS[idx];
+  activeFilter  = 'all';
+  activeSig     = null;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.zone === 'all');
+  });
+  render();
+}
+
+function setFilter(zone) {
+  activeFilter = zone;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.zone === zone);
+  });
+  renderTable();
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function render() {
+  const { drivers, total, assessed } = currentCohort;
+  const avg       = Math.round(drivers.reduce((s, d) => s + d.score, 0) / drivers.length);
+  const strained  = drivers.filter(d => d.score >= 19).length;
+  const strainPct = Math.round(strained / drivers.length * 100);
+
+  const sigAvgs = SIGS.map((_, si) => {
+    const avg2 = drivers.reduce((s, d) => s + d.sigScores[si], 0) / drivers.length;
+    return Math.round(avg2 * 10) / 10;
+  });
+  const topSigIdx = sigAvgs.indexOf(Math.max(...sigAvgs));
+  const topSigPct = Math.round(sigAvgs[topSigIdx] / 9 * 100);
+
+  document.getElementById('m-total').textContent      = assessed;
+  document.getElementById('m-completion').textContent = Math.round(assessed / total * 100) + '% completion rate';
+  document.getElementById('m-avg').textContent        = avg;
+  document.getElementById('m-strain').textContent     = strained;
+
+  const chip = document.getElementById('m-strain-chip');
+  chip.textContent       = strainPct + '% of cohort';
+  chip.style.background  = strainPct > 50 ? '#FDF3E0' : '#E3F2EA';
+  chip.style.color       = strainPct > 50 ? '#7A5000' : '#1F5A38';
+
+  document.getElementById('m-topsig').textContent     = SIGS[topSigIdx];
+  document.getElementById('m-topsig-sub').textContent = topSigPct + '% avg. elevation';
+
+  renderZoneStrip(drivers);
+  renderSigBars(sigAvgs, topSigIdx);
+  renderInsights(drivers, sigAvgs, topSigIdx, strainPct);
+  renderTable();
+  renderChart(drivers);
+}
+
+function renderZoneStrip(drivers) {
+  const el = document.getElementById('zone-strip');
+  el.innerHTML = '';
+  ZONES_CFG.forEach(z => {
+    const count = drivers.filter(d => d.zone.id === z.id).length;
+    const pct   = Math.round(count / drivers.length * 100);
+    el.innerHTML += `
+      <div class="zone-tile" style="background:${z.bg};border-color:${z.hex}33">
+        <div class="zone-tile-label" style="color:${z.tc}">${z.label}</div>
+        <div class="zone-tile-count" style="color:${z.hex}">${count}</div>
+        <div class="zone-tile-pct"   style="color:${z.tc}">${pct}% of cohort</div>
+        <div class="zone-bar"><div class="zone-bar-fill" style="width:${pct}%;background:${z.hex}"></div></div>
+      </div>`;
+  });
+}
+
+function renderSigBars(sigAvgs, topIdx) {
+  const el    = document.getElementById('sig-bars');
+  el.innerHTML = '';
+  const order = [...sigAvgs.map((v, i) => ({ v, i }))].sort((a, b) => b.v - a.v);
+  order.forEach(({ v, i }) => {
+    const pct      = Math.round(v / 9 * 100);
+    const elevated = pct >= 55;
+    el.innerHTML  += `
+      <div class="sig-row${activeSig === i ? ' active' : ''}" onclick="filterBySig(${i})" title="${SIG_FULL[i]}">
+        <span class="sig-name">${SIGS[i]}</span>
+        <div class="sig-track"><div class="sig-fill" style="width:${pct}%;background:${SIG_HEX[i]}"></div></div>
+        <span class="sig-pct">${pct}%</span>
+        ${elevated ? `<span class="elevated-badge" style="background:${SIG_HEX[i]}22;color:${SIG_HEX[i]}">↑</span>` : ''}
+      </div>`;
+  });
+}
+
+function filterBySig(si) {
+  activeSig = activeSig === si ? null : si;
+  renderSigBars(
+    currentCohort.drivers.reduce((acc, d) => {
+      SIGS.forEach((_, i) => { acc[i] = (acc[i] || 0) + d.sigScores[i]; });
+      return acc;
+    }, new Array(SIGS.length).fill(0)).map(s => s / currentCohort.drivers.length)
+  );
+  renderTable();
+}
+
+function renderInsights(drivers, sigAvgs, topSigIdx, strainPct) {
+  const el       = document.getElementById('insights');
+  el.innerHTML   = '';
+  const insights = [];
+
+  if (strainPct >= 60) {
+    insights.push({ type: 'alert', title: 'High cohort strain', body: `${strainPct}% of drivers are in the Yellow Zone™ or above. Prioritise group Yellow Zone™ education before individual coaching.` });
+  } else if (strainPct >= 35) {
+    insights.push({ type: 'warn', title: 'Moderate strain present', body: `${strainPct}% of drivers show early or significant readiness strain. Focus initial coaching on the top two elevated signals.` });
+  } else {
+    insights.push({ type: 'ok', title: 'Cohort readiness stable', body: 'Most drivers are in Stable Readiness. Use this window to reinforce habits before strain accumulates.' });
+  }
+
+  const topPct = Math.round(sigAvgs[topSigIdx] / 9 * 100);
+  insights.push({
+    type: topPct > 65 ? 'alert' : topPct > 45 ? 'warn' : 'ok',
+    title: `${SIGS[topSigIdx]} most elevated`,
+    body:  `Cohort average is ${topPct}% of maximum for this signal. ${topPct > 65 ? 'Address directly in group sessions.' : topPct > 45 ? 'Monitor closely and include in individual check-ins.' : 'Worth noting but not yet a priority.'}`,
+  });
+
+  const visCount = drivers.filter(d => d.zone.id === 'visible').length;
+  if (visCount > 0) {
+    insights.push({ type: 'alert', title: `${visCount} driver${visCount > 1 ? 's' : ''} in Visible Problems`, body: 'These drivers benefit most from direct, structured coaching support. Prioritise individual sessions and consider 12-Week Program referral.' });
+  }
+
+  insights.forEach(ins => {
+    el.innerHTML += `
+      <div class="insight-block${ins.type === 'warn' ? ' warn' : ins.type === 'alert' ? ' alert' : ''}">
+        <div class="insight-title">${ins.title}</div>
+        <div class="insight-body">${ins.body}</div>
+      </div>`;
+  });
+}
+
+function renderTable() {
+  const tbody = document.getElementById('driver-tbody');
+  let drivers  = [...currentCohort.drivers].sort((a, b) => b.score - a.score);
+
+  if (activeFilter !== 'all')  drivers = drivers.filter(d => d.zone.id === activeFilter);
+  if (activeSig !== null)       drivers = [...drivers].sort((a, b) => b.sigScores[activeSig] - a.sigScores[activeSig]);
+
+  tbody.innerHTML = '';
+  drivers.forEach(d => {
+    const z   = d.zone;
+    // "Coach ↗" button calls sendPrompt() which copies the context to clipboard
+    const prompt = `I am coaching a driver in the HaulWell™ system. Zone: ${z.label}. Most elevated signal: ${SIG_FULL[d.topSig]}. What coaching approach do you recommend for this session? Please be specific about which readiness signals to prioritise and what small, practical habits to suggest. Keep the language driver-realistic — not clinical.`;
+    tbody.innerHTML += `
+      <tr>
+        <td style="font-weight:500">${d.id}</td>
+        <td>${d.score}<span style="font-size:10px;color:var(--color-text-secondary)"> /75</span></td>
+        <td><span class="zone-pill" style="background:${z.bg};color:${z.tc}">${z.label}</span></td>
+        <td style="color:var(--color-text-secondary);font-size:11px">${SIG_FULL[d.topSig]}</td>
+        <td><button class="action-btn" onclick="sendPrompt(${JSON.stringify(prompt)})">Copy ↗</button></td>
+      </tr>`;
+  });
+
+  if (drivers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--color-text-secondary);font-size:13px">No drivers in this zone for the current cohort.</td></tr>';
+  }
+}
+
+function renderChart(drivers) {
+  const counts = ZONES_CFG.map(z => drivers.filter(d => d.zone.id === z.id).length);
+  const ctx    = document.getElementById('trendChart');
+
+  if (chartInst) { chartInst.destroy(); }
+  chartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels:   ['Stable Readiness', 'Early Readiness Strain', 'Significant Readiness Strain', 'Visible Problems'],
+      datasets: [{
+        label:           'Drivers',
+        data:            counts,
+        backgroundColor: ['#2E7D5044','#C8850A44','#B85A0044','#B2222244'],
+        borderColor:     ['#2E7D50','#C8850A','#B85A00','#B22222'],
+        borderWidth:     1.5,
+        borderRadius:    4,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend:  { display: false },
+        tooltip: { callbacks: { label: ctx => `${ctx.parsed.y} driver${ctx.parsed.y !== 1 ? 's' : ''}` }},
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888780', maxRotation: 0, autoSkip: false }},
+        y: { grid: { color: 'rgba(0,0,0,.06)' }, ticks: { font: { size: 11 }, color: '#888780', stepSize: 1, precision: 0 }, beginAtZero: true },
+      },
+    },
+  });
+
+  const legend = document.getElementById('chart-legend');
+  legend.innerHTML = ZONES_CFG.map((z, i) => `
+    <span style="display:flex;align-items:center;gap:4px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${z.hex};display:inline-block"></span>
+      ${z.label} (${counts[i]})
+    </span>`).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadCohort(0);
+</script>
+
+<!-- ── Resource Footer Nav ─────────────────────────────────────────────── -->
+<div class="hw-res-footer">
+  <a class="hw-res-back" href="REPLACE_WITH_SNAPSHOT_URL">← Snapshot™</a>
+  <a class="hw-res-next" href="REPLACE_WITH_ECOSYSTEM_URL">View Ecosystem →</a>
+</div>
+
+</body>
+</html>
