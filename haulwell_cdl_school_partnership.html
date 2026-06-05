@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HaulWell™ — CDL School Readiness Partnership</title>
+<style>
+:root{--nv:#15324f;--gd:#cdb86a;--am:#caa23a;--gr:#3a9d78;--or:#e08a2b;--rd:#c0492f;--fg:#f7f9fb;--bd:#e4e7eb;--sl:#6b7280}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#1f2933;line-height:1.55;overflow-x:hidden}
+.topbar{background:var(--nv);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.tb-logo{font-size:15px;font-weight:800;color:#fff}
+.tb-logo em{color:var(--gd);font-style:normal}
+.tb-sub{font-size:9px;color:#9fb3c8;letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.tb-cta{background:var(--gd);color:var(--nv);border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s}
+.tb-cta:hover{background:#d9c97a}
+.hero{background:linear-gradient(150deg,#0f2438,#15324f 52%,#1d4870);padding:60px 20px 56px;text-align:center}
+.eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gd);font-weight:600;margin-bottom:14px}
+.hero h1{font-size:clamp(24px,5vw,42px);font-weight:800;color:#fff;line-height:1.15;max-width:660px;margin:0 auto 16px}
+.hero h1 i{font-style:normal;color:var(--gd)}
+.hero-sub{font-size:16px;color:#9fb3c8;max-width:520px;margin:0 auto;line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.sec-w{background:#fff;padding:48px 0}.sec-f{background:var(--fg);padding:48px 0}.sec-n{background:var(--nv);padding:48px 0}
+.sec-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gd);font-weight:600;margin-bottom:6px}
+.sec-lbl-dk{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#9aa5b1;font-weight:600;margin-bottom:6px}
+.sec-h{font-size:clamp(20px,3.5vw,30px);font-weight:800;color:var(--nv);margin-bottom:10px;line-height:1.2}
+.sec-h-w{font-size:clamp(20px,3.5vw,30px);font-weight:800;color:#fff;margin-bottom:10px;line-height:1.2}
+.sec-sub{font-size:15px;color:var(--sl);margin-bottom:28px;line-height:1.65;max-width:580px}
+.sec-sub-w{font-size:15px;color:#9fb3c8;margin-bottom:28px;line-height:1.65;max-width:580px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:22px;transition:border-color .2s}
+.card:hover{border-color:var(--am)}
+.card-icon{font-size:24px;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:700;color:var(--nv);margin-bottom:5px}
+.card-desc{font-size:13px;color:var(--sl);line-height:1.6}
+/* Workshop feature */
+.ws-feature{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--bd)}
+.ws-feature:last-child{border-bottom:none}
+.ws-num{width:30px;height:30px;border-radius:50%;background:var(--nv);color:var(--gd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.ws-title{font-size:14px;font-weight:700;color:var(--nv);margin-bottom:3px}
+.ws-desc{font-size:13px;color:var(--sl);line-height:1.55}
+/* Ecosystem layers */
+.eco-layer{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--nv);font-weight:700;margin:24px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--bd)}
+.eco-layer:first-of-type{margin-top:0}
+.eco-layer-sub{font-size:12px;color:var(--sl);margin:-4px 0 14px;line-height:1.5}
+.eco-item{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .15s}
+.eco-item:hover{border-color:var(--am)}
+.eco-check{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gr);color:#fff;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.eco-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.eco-name{font-size:14px;font-weight:700;color:var(--nv);margin-bottom:3px}
+.eco-desc{font-size:12px;color:var(--sl);line-height:1.55}
+/* Callout */
+.callout{border-left:4px solid var(--am);background:#fffbe9;border-radius:0 10px 10px 0;padding:16px 20px;margin:24px 0}
+.callout p{font-size:14px;color:#6b4c10;line-height:1.65;font-style:italic}
+.callout strong{font-style:normal;color:var(--nv)}
+.callout-teal{border-left-color:var(--gr);background:#eef8f1}
+.callout-teal p{color:#1f4d2e}
+/* Quote */
+.quote-block{background:var(--fg);border-radius:14px;padding:28px;text-align:center;margin:28px 0}
+.quote-text{font-size:18px;font-weight:700;color:var(--nv);line-height:1.4;font-style:italic;max-width:480px;margin:0 auto 8px}
+.quote-attr{font-size:12px;color:var(--sl)}
+/* CTA */
+.cta-section{text-align:center;padding:56px 20px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--gd);color:var(--nv);border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;transition:background .15s}
+.cta-btn:hover{background:#d9c97a}
+.cta-note{font-size:13px;color:#9fb3c8;margin-top:14px;line-height:1.6;max-width:440px;margin-left:auto;margin-right:auto}
+/* Footer */
+.pg-footer{background:var(--nv);padding:20px;text-align:center;font-size:11px;color:#9fb3c8}
+.pg-footer a{color:var(--gd);text-decoration:none}
+/* Mobile */
+@media(max-width:768px){
+  .hero{padding:40px 16px 36px}
+  .sec-w,.sec-f,.sec-n{padding:32px 0}
+  .card-grid{grid-template-columns:1fr}
+  .card-grid-2{grid-template-columns:1fr}
+  .wrap{padding:0 16px}
+  .cta-btn{padding:14px 24px;font-size:15px}
+  .cta-section{padding:40px 16px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:22px}
+  .sec-h,.sec-h-w{font-size:20px}
+  .tb-cta{padding:8px 14px;font-size:11px}
+  .quote-text{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div>
+    <div class="tb-logo">Haul<em>Well</em>™</div>
+    <div class="tb-sub">CDL School Partnership</div>
+  </div>
+  <a href="https://calendly.com/zlhealthcoach/driver-readiness-conversation" target="_blank" class="tb-cta">Schedule a Conversation →</a>
+</div>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="eyebrow">Readiness Before the First Mile™</div>
+  <h1>CDL training teaches how to operate the truck. <i>Who teaches how to sustain the driver?</i></h1>
+  <p class="hero-sub">Your students learn shifting, backing, and pre-trips. HaulWell™ helps them learn what happens to their body, energy, and margin once the training ends and the real road begins.</p>
+</div>
+
+<!-- ── Section 1: The Transition Challenge ── -->
+<div class="sec-w"><div class="wrap">
+  <div class="sec-lbl-dk">The transition challenge</div>
+  <h2 class="sec-h">The first 90 days on the road are nothing like the last 90 days of training.</h2>
+  <p class="sec-sub">CDL graduates face a sudden shift from structured learning to unstructured living. These are the six pressures that build before anyone notices.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">😴</div>
+      <div class="card-title">Fatigue Accumulation</div>
+      <div class="card-desc">Fatigue doesn't hit all at once. It builds across days and weeks — a slow leak that the new driver doesn't recognize because they've never experienced it at this level before.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💧</div>
+      <div class="card-title">Hydration Under Pressure</div>
+      <div class="card-desc">Truck stops sell energy drinks at eye level. Water takes effort. New drivers fall into dehydration patterns in the first week — and most don't connect it to how they feel by Friday.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">😤</div>
+      <div class="card-title">Stress Without Support</div>
+      <div class="card-desc">In training, instructors are always present. On the road, the new driver is alone — managing pressure, uncertainty, and isolation without a support system in place.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🍔</div>
+      <div class="card-title">Food Choices on the Road</div>
+      <div class="card-desc">Eating well on the road is possible — but it requires planning that new drivers haven't built yet. The default options at most stops work against readiness, not for it.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Energy Management</div>
+      <div class="card-desc">Students learn how to manage hours of service. Nobody teaches them how to manage their own energy across those hours. Caffeine fills the gap — until it stops working.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Lifestyle Adjustment</div>
+      <div class="card-desc">The shift from training to driving is a lifestyle change, not just a job change. Sleep schedules invert. Routines disappear. Everything the student relied on for stability shifts underneath them.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><strong>These aren't failures.</strong> They're the predictable consequences of entering a profession that no one fully prepares students for. HaulWell™ exists to close that gap — before the first commercial mile.</p>
+  </div>
+</div></div>
+
+<!-- ── Section 2: Workshop ── -->
+<div class="sec-f"><div class="wrap">
+  <div class="sec-lbl-dk">Readiness education</div>
+  <h2 class="sec-h">Driver Readiness Workshop™ — 90 minutes that change the first year.</h2>
+  <p class="sec-sub">A facilitated awareness session designed for CDL programs. Students leave with language for what they're about to experience — and one concrete thing to do about it.</p>
+
+  <div style="background:#fff;border:1px solid var(--bd);border-radius:14px;padding:24px">
+    <div class="ws-feature">
+      <div class="ws-num">1</div>
+      <div><div class="ws-title">Yellow Zone™ Awareness</div><div class="ws-desc">Students learn to recognize the gap between "passing" and "ready" — the period where margin is shrinking but performance hasn't visibly changed. This is where early awareness makes the difference.</div></div>
+    </div>
+    <div class="ws-feature">
+      <div class="ws-num">2</div>
+      <div><div class="ws-title">Margin Concepts</div><div class="ws-desc">What margin is, how it shrinks, and why it matters. Students learn to name their margin level — full, half, low, or empty — and recognize what pulls it down.</div></div>
+    </div>
+    <div class="ws-feature">
+      <div class="ws-num">3</div>
+      <div><div class="ws-title">Readiness Signals</div><div class="ws-desc">Eight observable patterns that indicate where readiness is shifting: hydration, energy, sleep, recovery, stress, physical condition, awareness, and support. Students learn what to watch for in themselves.</div></div>
+    </div>
+    <div class="ws-feature">
+      <div class="ws-num">4</div>
+      <div><div class="ws-title">The "One Thing" Exercise</div><div class="ws-desc">Every student identifies one realistic action they'll take in their first week of driving. Not a list. Not a plan. One thing — specific, doable, and anchored to something they learned today.</div></div>
+    </div>
+    <div class="ws-feature">
+      <div class="ws-num">5</div>
+      <div><div class="ws-title">Veteran Connection Prompt</div><div class="ws-desc">Students identify one veteran driver they'll reach out to and one real question they'll ask. That single conversation can compress years of learning into one honest exchange.</div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:var(--nv)">90 min</div>
+      <div style="font-size:11px;color:var(--sl);margin-top:2px">Session length</div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:var(--nv)">🪪</div>
+      <div style="font-size:11px;color:var(--sl);margin-top:2px">Readiness Card™ included</div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;text-align:center">
+      <div style="font-size:22px;font-weight:800;color:var(--nv)">✓</div>
+      <div style="font-size:11px;color:var(--sl);margin-top:2px">Fits existing curriculum</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ── Section 3: Student Readiness Experience ── -->
+<div class="sec-w"><div class="wrap">
+  <div class="sec-lbl-dk">What students experience</div>
+  <h2 class="sec-h">The same readiness tools active drivers use — before the first commercial mile.</h2>
+  <p class="sec-sub">Students complete the Driver Readiness Profile™ during the workshop or as a follow-up. They experience the full readiness journey and leave with a personal baseline.</p>
+
+  <div class="eco-layer">Assessment Tools</div>
+  <div class="eco-layer-sub">Students discover where their readiness stands before they start driving.</div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Driver Readiness Profile™</div><div class="eco-desc">25 questions. About 5 minutes. Each student receives a personal readiness zone, signal breakdown, and Margin Meter™ reading — establishing a pre-career baseline.</div></div></div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Weekly Readiness Snapshot™</div><div class="eco-desc">A 2-minute weekly pulse students can continue taking during their first months of driving. Shows whether margin is holding, improving, or declining after training ends.</div></div></div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Driver Readiness Coach Handoff™</div><div class="eco-desc">A personalized readiness summary generated from each student's actual results — with targeted coaching insights and one realistic next step.</div></div></div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Readiness Trend™</div><div class="eco-desc">Direction indicator showing whether the student's readiness is Building Margin™, Holding Margin™, or Losing Margin™. Becomes more meaningful with each weekly Snapshot™.</div></div></div>
+
+  <div class="eco-layer">Ongoing Support</div>
+  <div class="eco-layer-sub">For students and graduates who want structured readiness support beyond the CDL.</div>
+  <div class="eco-item"><div class="eco-icon">📅</div><div><div class="eco-name">12-Week Driver Readiness Program</div><div class="eco-desc">Structured coaching through Awareness, Stabilization, Reinforcement, and Sustainability. Designed for new drivers navigating the transition from training to road life.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">💬</div><div><div class="eco-name">HaulWell™ Driver Stability Coach™</div><div class="eco-desc">A personalized coaching companion available to enrolled participants. Helps new drivers build daily habits, reinforce what they learned, and stay focused during the hardest adjustment period.</div></div></div>
+
+  <div class="quote-block">
+    <div class="quote-text">"CDL programs that include readiness preparation produce graduates who stay in the industry longer."</div>
+    <div class="quote-attr">— HaulWell™ · Readiness Before the First Mile™</div>
+  </div>
+
+  <div class="callout callout-teal">
+    <p><strong>For your program:</strong> Students experience the same readiness journey active drivers use. This means your graduates enter their first job already aware of their readiness patterns — giving them an advantage that no other CDL program currently provides.</p>
+  </div>
+</div></div>
+
+<!-- ── Section 4: Partnership CTA ── -->
+<div class="sec-n">
+  <div class="cta-section">
+    <div class="eyebrow">CDL School Readiness Partnership</div>
+    <h2 class="sec-h-w" style="max-width:540px;margin-left:auto;margin-right:auto">Readiness education is the part of CDL training that doesn't exist yet. HaulWell™ builds it.</h2>
+    <p class="sec-sub-w" style="max-width:460px;margin-left:auto;margin-right:auto">A 20-minute conversation about integrating readiness education into your CDL program. Workshop delivery, student assessment baselines, co-branding options, and curriculum integration — all on the table.</p>
+    <a href="https://calendly.com/zlhealthcoach/driver-readiness-conversation" target="_blank" class="cta-btn">Schedule a CDL School Readiness Conversation →</a>
+    <p class="cta-note">Your students deserve to be <em style="color:var(--gd)">prepared beyond the CDL.</em></p>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div class="pg-footer">
+  HaulWell™ · powered by <a href="https://zlhealthcoach.com" target="_blank">Zoetic Life Health Coaching</a> · <a href="https://zlhealthcoach.com" target="_blank">zlhealthcoach.com</a>
+</div>
+
+</body>
+</html>

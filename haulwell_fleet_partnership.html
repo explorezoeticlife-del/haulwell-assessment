@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HaulWell™ — Fleet Readiness Partnership</title>
+<style>
+:root{--nv:#15324f;--gd:#cdb86a;--am:#caa23a;--gr:#3a9d78;--or:#e08a2b;--rd:#c0492f;--fg:#f7f9fb;--bd:#e4e7eb;--sl:#6b7280}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#1f2933;line-height:1.55;overflow-x:hidden}
+.topbar{background:var(--nv);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.tb-logo{font-size:15px;font-weight:800;color:#fff}
+.tb-logo em{color:var(--gd);font-style:normal}
+.tb-sub{font-size:9px;color:#9fb3c8;letter-spacing:1.5px;text-transform:uppercase;margin-top:1px}
+.tb-cta{background:var(--gd);color:var(--nv);border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s}
+.tb-cta:hover{background:#d9c97a}
+.hero{background:linear-gradient(150deg,#0f2438,#15324f 52%,#1d4870);padding:60px 20px 56px;text-align:center}
+.eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gd);font-weight:600;margin-bottom:14px}
+.hero h1{font-size:clamp(24px,5vw,42px);font-weight:800;color:#fff;line-height:1.15;max-width:640px;margin:0 auto 16px}
+.hero-sub{font-size:16px;color:#9fb3c8;max-width:520px;margin:0 auto;line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.sec-w{background:#fff;padding:48px 0}.sec-f{background:var(--fg);padding:48px 0}.sec-n{background:var(--nv);padding:48px 0}
+.sec-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gd);font-weight:600;margin-bottom:6px}
+.sec-lbl-dk{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#9aa5b1;font-weight:600;margin-bottom:6px}
+.sec-h{font-size:clamp(20px,3.5vw,30px);font-weight:800;color:var(--nv);margin-bottom:10px;line-height:1.2}
+.sec-h-w{font-size:clamp(20px,3.5vw,30px);font-weight:800;color:#fff;margin-bottom:10px;line-height:1.2}
+.sec-sub{font-size:15px;color:var(--sl);margin-bottom:28px;line-height:1.65;max-width:580px}
+.sec-sub-w{font-size:15px;color:#9fb3c8;margin-bottom:28px;line-height:1.65;max-width:580px}
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:22px;transition:border-color .2s}
+.card:hover{border-color:var(--am)}
+.card-dk{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:22px}
+.card-icon{font-size:24px;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:700;color:var(--nv);margin-bottom:5px}
+.card-title-w{font-size:15px;font-weight:700;color:#fff;margin-bottom:5px}
+.card-desc{font-size:13px;color:var(--sl);line-height:1.6}
+.card-desc-w{font-size:13px;color:#9fb3c8;line-height:1.6}
+/* Stages */
+.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:24px 0}
+.stg{padding:10px;position:relative}
+.stg:not(:last-child)::after{content:"→";position:absolute;right:-9px;top:43%;font-size:18px;color:var(--gd);font-weight:700;z-index:2}
+.si{border-radius:12px;padding:18px;border:1px solid var(--bd);border-top:4px solid transparent;background:#fff;height:100%}
+.si-g{border-top-color:var(--gr)}.si-y{border-top-color:var(--am)}.si-o{border-top-color:var(--or)}
+.ml{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#9aa5b1;margin-bottom:4px}
+.mb{background:#edf0f3;border-radius:4px;height:10px;overflow:hidden;margin-bottom:5px}
+.mf{height:100%;border-radius:4px}
+.mf1{background:var(--gr);width:92%}.mf2{background:var(--am);width:54%}.mf3{background:var(--or);width:22%}
+.ms{font-size:11px;font-weight:700}
+.ms1{color:var(--gr)}.ms2{color:var(--am)}.ms3{color:var(--or)}
+.sn{font-size:11px;color:#9aa5b1;margin-top:7px;line-height:1.4}
+.yb{display:inline-block;background:#fffbe9;border:1px solid #f0ead0;color:#8a7a3a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;margin-bottom:5px}
+.el{font-size:13px;font-weight:700;color:var(--nv);margin-bottom:4px}
+/* Ecosystem layers */
+.eco-layer{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--nv);font-weight:700;margin:24px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--bd)}
+.eco-layer:first-of-type{margin-top:0}
+.eco-layer-sub{font-size:12px;color:var(--sl);margin:-4px 0 14px;line-height:1.5}
+.eco-item{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .15s}
+.eco-item:hover{border-color:var(--am)}
+.eco-check{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gr);color:#fff;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.eco-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.eco-name{font-size:14px;font-weight:700;color:var(--nv);margin-bottom:3px}
+.eco-desc{font-size:12px;color:var(--sl);line-height:1.55}
+.eco-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--nv);color:var(--gd);padding:3px 8px;border-radius:20px;margin-left:6px;vertical-align:middle}
+/* Dashboard preview */
+.dash-preview{background:#fff;border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.dash-hdr{background:var(--nv);padding:16px 22px;display:flex;align-items:center;justify-content:space-between}
+.dash-hdr-t{font-size:14px;font-weight:700;color:#fff}
+.dash-hdr-s{font-size:10px;color:#9fb3c8}
+.dash-body{padding:22px}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.dash-stat{text-align:center;padding:14px 8px;background:var(--fg);border-radius:10px;border:1px solid var(--bd)}
+.dash-stat-n{font-size:24px;font-weight:800;line-height:1}
+.dash-stat-l{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--sl);margin-top:4px}
+.zone-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:12px 0 8px}
+.zb-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.zone-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.zone-legend-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sl)}
+.zone-legend-d{width:10px;height:10px;border-radius:3px}
+.dash-note{background:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;font-size:12px;color:var(--sl);line-height:1.6;margin-top:16px}
+.dash-note strong{color:var(--nv)}
+/* CTA */
+.cta-section{text-align:center;padding:56px 20px}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--gd);color:var(--nv);border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;transition:background .15s}
+.cta-btn:hover{background:#d9c97a}
+.cta-note{font-size:13px;color:#9fb3c8;margin-top:14px;line-height:1.6;max-width:420px;margin-left:auto;margin-right:auto}
+/* Footer */
+.pg-footer{background:var(--nv);padding:20px;text-align:center;font-size:11px;color:#9fb3c8}
+.pg-footer a{color:var(--gd);text-decoration:none}
+/* Callout */
+.callout{border-left:4px solid var(--am);background:#fffbe9;border-radius:0 10px 10px 0;padding:16px 20px;margin:24px 0}
+.callout p{font-size:14px;color:#6b4c10;line-height:1.65;font-style:italic}
+.callout strong{font-style:normal;color:var(--nv)}
+/* Mobile */
+@media(max-width:768px){
+  .hero{padding:40px 16px 36px}
+  .sec-w,.sec-f,.sec-n{padding:32px 0}
+  .card-grid{grid-template-columns:1fr}
+  .card-grid-2{grid-template-columns:1fr}
+  .stages{grid-template-columns:1fr;gap:12px}
+  .stg:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-18px;transform:translateX(-50%)}
+  .dash-grid{grid-template-columns:repeat(2,1fr)}
+  .wrap{padding:0 16px}
+  .cta-btn{padding:14px 24px;font-size:15px}
+  .cta-section{padding:40px 16px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:22px}
+  .sec-h,.sec-h-w{font-size:20px}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .zone-legend{gap:8px}
+  .tb-cta{padding:8px 14px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="topbar">
+  <div>
+    <div class="tb-logo">Haul<em>Well</em>™</div>
+    <div class="tb-sub">Fleet Readiness Partnership</div>
+  </div>
+  <a href="https://calendly.com/zlhealthcoach/driver-readiness-conversation" target="_blank" class="tb-cta">Schedule a Conversation →</a>
+</div>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="eyebrow">Fleet Readiness Partnership</div>
+  <h1>Your drivers are still delivering. But are they still ready?</h1>
+  <p class="hero-sub">Readiness declines before performance does. HaulWell™ helps fleets see the shift early — in time to support the driver, protect operations, and reduce preventable disruptions.</p>
+</div>
+
+<!-- ── Section 1: What Is Driver Readiness ── -->
+<div class="sec-w"><div class="wrap">
+  <div class="sec-lbl-dk">Understanding readiness</div>
+  <h2 class="sec-h">A driver can be passing every check — and quietly losing margin.</h2>
+  <p class="sec-sub">DOT physicals measure medical fitness. Performance reviews measure output. Neither measures readiness — the internal buffer that absorbs the next hard day.</p>
+
+  <div class="stages">
+    <div class="stg"><div class="si si-g">
+      <div class="el">Performing</div>
+      <div class="ml">Operational Margin</div>
+      <div class="mb"><div class="mf mf1"></div></div>
+      <div class="ms ms1">Full — buffer intact</div>
+      <div class="sn">Routines holding. Recovery keeping pace. The driver absorbs stressors without accumulation.</div>
+    </div></div>
+    <div class="stg"><div class="si si-y">
+      <div class="yb">🟡 Yellow Zone™</div>
+      <div class="el">Still passing</div>
+      <div class="ml">Operational Margin</div>
+      <div class="mb"><div class="mf mf2"></div></div>
+      <div class="ms ms2">Narrowing — buffer thinning</div>
+      <div class="sn">Energy slipping. Sleep disrupted. Recovery falling behind. Still functional — but less room for the next stressor.</div>
+    </div></div>
+    <div class="stg"><div class="si si-o">
+      <div class="el">Still delivering</div>
+      <div class="ml">Operational Margin</div>
+      <div class="mb"><div class="mf mf3"></div></div>
+      <div class="ms ms3">Low — strain compounding</div>
+      <div class="sn">External performance unchanged. Inside — the buffer has nearly disappeared. This is where turnover, incidents, and medical events begin.</div>
+    </div></div>
+  </div>
+
+  <div class="callout">
+    <p><strong>The Yellow Zone™</strong> is where HaulWell™ works. Drivers are still functional, still receptive, and one small adjustment can prevent a much larger disruption. This is the window the industry currently has almost no systems operating in.</p>
+  </div>
+</div></div>
+
+<!-- ── Section 2: Why It Matters ── -->
+<div class="sec-f"><div class="wrap">
+  <div class="sec-lbl-dk">Why readiness matters for fleets</div>
+  <h2 class="sec-h">Six areas where shrinking margin shows up in your operation.</h2>
+  <p class="sec-sub">Each one is connected. When readiness declines, these don't happen in isolation — they compound.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Retention</div>
+      <div class="card-desc">Drivers don't always leave because of pay. They leave because the job became unsustainable. Declining readiness is often the root cause that exit interviews never surface.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <div class="card-title">Safety</div>
+      <div class="card-desc">A fatigued driver with shrinking margin makes different decisions than a rested one. Readiness decline changes reaction time, judgment, and risk tolerance — before any incident occurs.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">😴</div>
+      <div class="card-title">Fatigue</div>
+      <div class="card-desc">Fatigue accumulates like a slow leak. Drivers don't feel it building — they just run out of margin. By the time it's visible, it's been building for weeks.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">❤️</div>
+      <div class="card-title">Blood Pressure Awareness</div>
+      <div class="card-desc">Dehydration, salt-heavy food, poor sleep, and chronic stress push blood pressure up quietly. Drivers won't feel it early — but it affects DOT medical certification directly.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title">Driver Stability</div>
+      <div class="card-desc">Stable drivers are consistent drivers. When readiness declines, variability increases — in mood, performance, attendance, and engagement. The driver hasn't changed. Their margin has.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Operational Consistency</div>
+      <div class="card-desc">Readiness is the invisible variable behind operational reliability. When margin is protected across a fleet, consistency improves — not because drivers try harder, but because they have more capacity.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ── Section 3: Ecosystem ── -->
+<div class="sec-w"><div class="wrap">
+  <div class="sec-lbl-dk">How HaulWell™ supports your drivers</div>
+  <h2 class="sec-h">One connected readiness system — from awareness to sustained support.</h2>
+  <p class="sec-sub">Every component serves the driver. Fleets benefit because supported drivers are more stable, more consistent, and more likely to stay.</p>
+
+  <div class="eco-layer">Assessment Layer</div>
+  <div class="eco-layer-sub">Tools that identify and monitor readiness across your fleet.</div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Driver Readiness Profile™</div><div class="eco-desc">25-question self-awareness tool placing each driver on the Readiness Continuum. Private to the driver — fleet sees aggregate patterns only.</div></div></div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Weekly Readiness Snapshot™</div><div class="eco-desc">10-domain weekly pulse tracking margin movement over time. Shows whether readiness across your fleet is improving, holding, or declining.</div></div></div>
+  <div class="eco-item"><div class="eco-check">✓</div><div><div class="eco-name">Driver Readiness Coach Handoff™</div><div class="eco-desc">Zone-aware coaching summary built from actual Profile™ and Snapshot™ results. Provides targeted, practical guidance without requiring clinical intervention.</div></div></div>
+
+  <div class="eco-layer">Support Layer</div>
+  <div class="eco-layer-sub">Tools that help drivers improve and maintain readiness over time.</div>
+  <div class="eco-item"><div class="eco-icon">📅</div><div><div class="eco-name">12-Week Driver Readiness Program</div><div class="eco-desc">Structured coaching through four pillars: Awareness, Stabilization, Reinforcement, Sustainability. Designed for drivers in the Yellow Zone™ or deeper.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">🎯</div><div><div class="eco-name">1-on-1 Driver Readiness Coaching</div><div class="eco-desc">Personalized sessions with a certified health coach trained in the HaulWell™ framework. Built around each driver's actual signals and context.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">💬</div><div><div class="eco-name">HaulWell™ Driver Stability Coach™ <span class="eco-badge">Powered by ChatGPT</span></div><div class="eco-desc">Ongoing coaching companion that helps enrolled drivers build consistency, reinforce habits, and stay focused between sessions. Continues the readiness conversation between coaching sessions, helping drivers turn awareness into daily action.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">📈</div><div><div class="eco-name">Margin Meter™ Tracking</div><div class="eco-desc">Visual readiness gauge showing where each driver's margin stands and how it moves over time. At the fleet level, this becomes a readiness direction indicator.</div></div></div>
+
+  <div class="eco-layer">Organization Support Layer</div>
+  <div class="eco-layer-sub">Resources for fleet-wide readiness implementation.</div>
+  <div class="eco-item"><div class="eco-icon">📚</div><div><div class="eco-name">Driver Readiness Workshop™</div><div class="eco-desc">90-minute awareness session introducing margin, the Yellow Zone™, and readiness signals. Ideal for orientation, safety meetings, or fleet-wide rollouts.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">🪪</div><div><div class="eco-name">Driver Readiness Card™</div><div class="eco-desc">Quick-reference readiness tool covering key concepts and signals. Drivers keep it as a daily reminder.</div></div></div>
+  <div class="eco-item"><div class="eco-icon">📊</div><div><div class="eco-name">Fleet Cohort Dashboard™</div><div class="eco-desc">Aggregate readiness reporting for fleet managers, safety directors, and leadership. Zone distribution, participation rates, and margin movement — across the fleet.</div></div></div>
+</div></div>
+
+<!-- ── Section 4: Dashboard Preview ── -->
+<div class="sec-f"><div class="wrap">
+  <div class="sec-lbl-dk">What you'll see</div>
+  <h2 class="sec-h">Fleet Cohort Dashboard™ — aggregate readiness at a glance.</h2>
+  <p class="sec-sub">Readiness patterns across your fleet — without exposing individual driver data.</p>
+
+  <div class="dash-preview">
+    <div class="dash-hdr">
+      <div class="dash-hdr-t">Fleet Cohort Dashboard™</div>
+      <div class="dash-hdr-s">Aggregate View · 42 Drivers</div>
+    </div>
+    <div class="dash-body">
+      <div class="dash-grid">
+        <div class="dash-stat"><div class="dash-stat-n" style="color:var(--gr)">42</div><div class="dash-stat-l">Enrolled Drivers</div></div>
+        <div class="dash-stat"><div class="dash-stat-n" style="color:var(--nv)">88%</div><div class="dash-stat-l">Participation Rate</div></div>
+        <div class="dash-stat"><div class="dash-stat-n" style="color:var(--gr)">↗</div><div class="dash-stat-l">Margin Direction</div></div>
+        <div class="dash-stat"><div class="dash-stat-n" style="color:var(--am)">62</div><div class="dash-stat-l">Avg. Readiness Score</div></div>
+      </div>
+      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sl);font-weight:600;margin-bottom:6px">Zone Distribution</div>
+      <div class="zone-bar">
+        <div class="zb-seg" style="background:var(--gr);width:38%">38%</div>
+        <div class="zb-seg" style="background:var(--am);width:35%">35%</div>
+        <div class="zb-seg" style="background:var(--or);width:19%">19%</div>
+        <div class="zb-seg" style="background:var(--rd);width:8%">8%</div>
+      </div>
+      <div class="zone-legend">
+        <div class="zone-legend-i"><div class="zone-legend-d" style="background:var(--gr)"></div>Stable</div>
+        <div class="zone-legend-i"><div class="zone-legend-d" style="background:var(--am)"></div>Yellow Zone™</div>
+        <div class="zone-legend-i"><div class="zone-legend-d" style="background:var(--or)"></div>Significant</div>
+        <div class="zone-legend-i"><div class="zone-legend-d" style="background:var(--rd)"></div>Visible</div>
+      </div>
+      <div class="dash-note">
+        <strong>Privacy by design:</strong> The Fleet Cohort Dashboard™ shows aggregate readiness patterns only. No individual driver scores, responses, or coaching content is visible to fleet administrators. Drivers maintain complete privacy over their personal readiness data.
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ── Section 5: Partnership CTA ── -->
+<div class="sec-n">
+  <div class="cta-section">
+    <div class="eyebrow">Fleet Readiness Partnership</div>
+    <h2 class="sec-h-w" style="max-width:520px;margin-left:auto;margin-right:auto">HaulWell™ supports your drivers so they can sustain the work.</h2>
+    <p class="sec-sub-w" style="max-width:460px;margin-left:auto;margin-right:auto">A 20-minute conversation about what readiness support could look like for your fleet. No pitch — just a practical discussion about what your drivers are experiencing and how to help.</p>
+    <a href="https://calendly.com/zlhealthcoach/driver-readiness-conversation" target="_blank" class="cta-btn">Schedule a Fleet Readiness Conversation →</a>
+    <p class="cta-note">You can also explore the <a href="https://zlhealthcoach.com/driver-readiness-support-program" target="_blank" style="color:var(--gd)">12-Week Driver Readiness Program</a> to see how structured support works.</p>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div class="pg-footer">
+  HaulWell™ · powered by <a href="https://zlhealthcoach.com" target="_blank">Zoetic Life Health Coaching</a> · <a href="https://zlhealthcoach.com" target="_blank">zlhealthcoach.com</a>
+</div>
+
+</body>
+</html>
